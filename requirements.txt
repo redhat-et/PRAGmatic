@@ -1,0 +1,11 @@
+beautifulsoup4==4.12.3
+elasticsearch==8.15.1
+fastapi==0.115.2
+langchain_community==0.3.2
+langchain_core==0.3.12
+langgraph==0.2.38
+langserve==0.3.0
+pydantic==1.10.12
+Requests==2.32.3
+typing_extensions==4.12.2
+uvicorn==0.32.0
