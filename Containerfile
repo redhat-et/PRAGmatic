@@ -33,6 +33,10 @@ ENV ES_JAVA_OPTS="-Xms512m -Xmx512m"
 # Disable Haystack telemetry collection
 ENV HAYSTACK_TELEMETRY_ENABLED="False"
 
+# Set Transformers cache to a writable folder
+RUN mkdir cache
+ENV TRANSFORMERS_CACHE="/app/cache"
+
 # Configure Elasticsearch
 RUN echo "network.host: 0.0.0.0" >> /etc/elasticsearch/elasticsearch.yml
 
