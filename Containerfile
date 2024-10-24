@@ -16,7 +16,7 @@ RUN curl -fsSL https://artifacts.elastic.co/GPG-KEY-elasticsearch | apt-key add 
     && rm -rf /var/lib/apt/lists/*
 
 # Install vLLM and required Python packages
-RUN pip install --no-cache-dir vllm haystack-ai elasticsearch elasticsearch-haystack transformers[torch,sentencepiece]
+RUN pip install --no-cache-dir vllm haystack-ai elasticsearch elasticsearch-haystack transformers[torch,sentencepiece] sentence-transformers
 
 # Set the working directory in the container
 WORKDIR /app
