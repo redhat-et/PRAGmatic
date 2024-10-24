@@ -42,3 +42,6 @@ CMD python main.py -i
 
 # Run vLLM server
 CMD vllm serve --host 0.0.0.0 --port 8000 --model mistralai/Mistral-7B-Instruct-v0.1 &
+
+# Test - run Haystack pipeline in RAG mode
+CMD python main.py -r --query "What are the steps to install OpenShift CLI on macOS?"
