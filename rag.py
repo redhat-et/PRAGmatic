@@ -1,5 +1,5 @@
 from haystack.components.builders import PromptBuilder
-from haystack.components.generators.chat import OpenAIChatGenerator
+from haystack.components.generators import OpenAIGenerator
 from haystack.components.joiners import DocumentJoiner
 from haystack.components.rankers import TransformersSimilarityRanker
 from haystack.utils import Secret
@@ -43,7 +43,7 @@ def run_rag_pipeline(query, settings=DEFAULT_SETTINGS):
     ranker = TransformersSimilarityRanker(model=settings["ranking_model"])
 
     prompt_builder = PromptBuilder(template=BASE_RAG_PROMPT)
-    llm = OpenAIChatGenerator(
+    llm = OpenAIGenerator(
         api_key=Secret.from_token("VLLM-PLACEHOLDER-API-KEY"),  # for compatibility with the OpenAI API
         model=settings["llm"],
         api_base_url=settings["vllm_base_url"],
