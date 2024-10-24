@@ -14,6 +14,8 @@ spec:
         env:
         - name: ES_JAVA_OPTS
           value: "-Xms512m -Xmx512m"
+        - name: HAYSTACK_TELEMETRY_ENABLED
+          value: "False"
         ports:
         - containerPort: 9200
         - containerPort: 8000

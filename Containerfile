@@ -30,6 +30,9 @@ EXPOSE 9200 8000
 # Define environment variables for Elasticsearch
 ENV ES_JAVA_OPTS="-Xms512m -Xmx512m"
 
+# Disable Haystack telemetry collection
+ENV HAYSTACK_TELEMETRY_ENABLED="False"
+
 # Configure Elasticsearch
 RUN echo "network.host: 0.0.0.0" >> /etc/elasticsearch/elasticsearch.yml
 
