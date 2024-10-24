@@ -64,7 +64,7 @@ def run_rag_pipeline(query, settings=DEFAULT_SETTINGS):
     pipeline.connect("embedding_retriever", "document_joiner")
     pipeline.connect("document_joiner", "ranker")
     pipeline.connect("ranker", "prompt_builder.documents")
-    pipeline.connect("prompt_builder.prompt", "llm.prompt")
+    pipeline.connect("prompt_builder", "llm")
 
     result = pipeline.run({"text_embedder": {"text": query},
                            "bm25_retriever": {"query": query},
