@@ -24,9 +24,6 @@ WORKDIR /app
 # Clone the Haystack application source code from the Github repository
 RUN git clone https://github.com/ilya-kolchinsky/RHOAI-RAG.git /app
 
-# Install dependencies
-RUN pip install -r requirements.txt
-
 # Expose the necessary ports for Elasticsearch and vLLM
 EXPOSE 9200 8000
 
