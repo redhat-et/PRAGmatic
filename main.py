@@ -39,7 +39,7 @@ def main():
     if args.indexing:
         run_indexing_pipeline(settings)
     else:
-        run_rag_pipeline(args.query, settings)
+        print(run_rag_pipeline(args.query, settings))
 
 
 if __name__ == "__main__":
