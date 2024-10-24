@@ -1,0 +1,21 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: rag-pipeline-job
+spec:
+  template:
+    metadata:
+      name: rag-pipeline
+    spec:
+      containers:
+      - name: rag-pipeline-container
+        image: image-registry.openshift-image-registry.svc:5000/rag-poc/rag-framework-image-stream
+        command: ["python", "main.py", "-r", "--query", "What are the steps to install OpenShift CLI on macOS?"]
+        env:
+        - name: ES_JAVA_OPTS
+          value: "-Xms512m -Xmx512m"
+        ports:
+        - containerPort: 9200
+        - containerPort: 8000
+      restartPolicy: Never
+  backoffLimit: 4
