@@ -19,9 +19,6 @@ RUN wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-8.15
 # Expose the necessary ports for Elasticsearch and vLLM
 EXPOSE 9200 8000
 
-# Configure Elasticsearch
-RUN echo "network.host: 0.0.0.0" >> /etc/elasticsearch/elasticsearch.yml
-
 # Run Elasticsearch
 CMD ./bin/elasticsearch &
 
