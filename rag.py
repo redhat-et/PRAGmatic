@@ -23,7 +23,7 @@ BASE_RAG_PROMPT = """You are an assistant for question-answering tasks.
 
     Now, review the user question:
 
-    {query}
+    {{query}}
 
     Provide an answer to this questions using only the above context. 
 
