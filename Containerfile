@@ -33,8 +33,9 @@ ENV ES_JAVA_OPTS="-Xms512m -Xmx512m"
 # Disable Haystack telemetry collection
 ENV HAYSTACK_TELEMETRY_ENABLED="False"
 
-# Set Transformers cache to a writable folder
+# Setup Transformers cache
 RUN mkdir cache
+RUN chmod -R 777 /app/cache
 ENV TRANSFORMERS_CACHE="/app/cache"
 
 # Configure Elasticsearch
