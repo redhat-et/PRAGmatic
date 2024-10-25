@@ -42,7 +42,7 @@ ENV TRANSFORMERS_CACHE="/app/cache"
 RUN echo "network.host: 0.0.0.0" >> /etc/elasticsearch/elasticsearch.yml
 
 # Run Elasticsearch
-CMD service elasticsearch start &
+CMD ./bin/elasticsearch &
 
 # Run Haystack pipeline in indexing mode
 CMD python main.py -i
