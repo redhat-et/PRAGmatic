@@ -1,5 +1,5 @@
 DEFAULT_SETTINGS = {
-    "embedding_model": "sentence-transformers/multi-qa-mpnet-base-dot-v1",
+    "embedding_model": "sentence-transformers/all-mpnet-base-v2",
     "ranking_model": "BAAI/bge-reranker-base",
 
     "llm": "mistralai/Mistral-7B-Instruct-v0.1",

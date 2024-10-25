@@ -69,5 +69,5 @@ def run_rag_pipeline(query, settings=DEFAULT_SETTINGS):
     result = pipeline.run({"text_embedder": {"text": query},
                            "bm25_retriever": {"query": query},
                            "ranker": {"query": query},
-                           "prompt_builder": {"question": query}})
+                           "prompt_builder": {"query": query}})
     return result["llm"]["replies"][0]
