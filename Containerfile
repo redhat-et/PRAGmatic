@@ -13,12 +13,16 @@ RUN apt-get update && apt-get install -y \
     git \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Elasticsearch
 RUN wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-8.15.3-linux-x86_64.tar.gz \
     && wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-8.15.3-linux-x86_64.tar.gz.sha512 \
     && shasum -a 512 -c elasticsearch-8.15.3-linux-x86_64.tar.gz.sha512 \
     && tar -xzf elasticsearch-8.15.3-linux-x86_64.tar.gz \
-    && cd elasticsearch-8.15.3/
+    && mv elasticsearch-8.15.3 /elasticsearch \
+    && chown -R root:root /elasticsearch \
+    && chmod -R 777 /elasticsearch/config
+
+# Create the Elasticsearch keystore during the image build process to avoid running into permissions issues
+RUN /elasticsearch/bin/elasticsearch-keystore create
 
 # Expose the necessary ports for Elasticsearch and vLLM
 EXPOSE 9200 8000
@@ -45,7 +49,7 @@ ENV TRANSFORMERS_CACHE="/app/cache"
 
 # Create a script to run Elasticsearch, vLLM and Haystack
 RUN echo "#!/bin/bash\n\
-/elasticsearch-8.15.3/bin/elasticsearch > /app/elasticsearch.log 2>&1 &\n\
+/elasticsearch/bin/elasticsearch > /app/elasticsearch.log 2>&1 &\n\
 vllm serve --host 0.0.0.0 --port 8000 --model mistralai/Mistral-7B-Instruct-v0.1 &\n\
 \n\
 # Check if Elasticsearch is running\n\
@@ -65,7 +69,8 @@ echo 'vLLM is running.'\n\
 # Run Haystack pipeline in indexing mode\n\
 python main.py -i\n" > /app/start_services.sh
 
-RUN chmod +x /app/start_services.sh
+USER root
+RUN chmod -R 777 /app/start_services.sh
 
 # Use the script as the entrypoint
 CMD ["/app/start_services.sh"]
