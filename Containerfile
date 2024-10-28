@@ -69,5 +69,7 @@ echo 'vLLM is running.'\n\
 # Run Haystack pipeline in indexing mode\n\
 python main.py -i\n" > /app/start_services.sh
 
+RUN chmod -R 777 /app/start_services.sh
+
 # Use the script as the entrypoint
 CMD ["/app/start_services.sh"]
