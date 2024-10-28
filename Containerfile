@@ -27,7 +27,7 @@ RUN /elasticsearch/bin/elasticsearch-keystore create
 EXPOSE 9200 8000
 
 # Install vLLM and required Python packages
-RUN pip install --no-cache-dir vllm haystack-ai elasticsearch elasticsearch-haystack transformers[torch,sentencepiece] sentence-transformers trafilatura
+RUN pip install --no-cache-dir vllm haystack-ai trafilatura lxml_html_clean elasticsearch elasticsearch-haystack transformers[torch,sentencepiece] sentence-transformers
 
 # Set the working directory in the container
 WORKDIR /app
@@ -50,24 +50,7 @@ ENV TRANSFORMERS_CACHE="/app/cache"
 # Create a script to run Elasticsearch, vLLM and Haystack
 RUN echo "#!/bin/bash\n\
 /elasticsearch/bin/elasticsearch &\n\
-vllm serve --host 0.0.0.0 --port 8000 --model mistralai/Mistral-7B-Instruct-v0.1 &\n\
-\n\
-# Check if Elasticsearch is running\n\
-echo 'Waiting for Elasticsearch to start...'\n\
-until curl -s http://localhost:9200 >/dev/null; do\n\
-    sleep 1\n\
-done\n\
-echo 'Elasticsearch is running.'\n\
-\n\
-# Check if vLLM is running\n\
-echo 'Waiting for vLLM to start...'\n\
-until nc -z localhost 8000; do\n\
-    sleep 1\n\
-done\n\
-echo 'vLLM is running.'\n\
-\n\
-# Run Haystack pipeline in indexing mode\n\
-python main.py -i\n" > /app/start_services.sh
+vllm serve --host 0.0.0.0 --port 8000 --model mistralai/Mistral-7B-Instruct-v0.1 &\n" > /app/start_services.sh
 
 RUN chmod -R 777 /app/start_services.sh
 

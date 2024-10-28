@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: rag-pipeline-job
+  name: rag-indexing-job
 spec:
   template:
     metadata:
