@@ -32,6 +32,7 @@ RUN pip install --no-cache-dir vllm haystack-ai elasticsearch elasticsearch-hays
 
 # Set the working directory in the container
 WORKDIR /app
+RUN chmod -R 777 /app
 
 # Clone the Haystack application source code from the Github repository
 RUN git clone https://github.com/ilya-kolchinsky/RHOAI-RAG.git /app
@@ -49,7 +50,7 @@ ENV TRANSFORMERS_CACHE="/app/cache"
 
 # Create a script to run Elasticsearch, vLLM and Haystack
 RUN echo "#!/bin/bash\n\
-/elasticsearch/bin/elasticsearch > /app/elasticsearch.log 2>&1 &\n\
+/elasticsearch/bin/elasticsearch &\n\
 vllm serve --host 0.0.0.0 --port 8000 --model mistralai/Mistral-7B-Instruct-v0.1 &\n\
 \n\
 # Check if Elasticsearch is running\n\

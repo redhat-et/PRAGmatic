@@ -20,4 +20,4 @@ spec:
         - containerPort: 9200
         - containerPort: 8000
       restartPolicy: Never
-  backoffLimit: 4
+  backoffLimit: 1
