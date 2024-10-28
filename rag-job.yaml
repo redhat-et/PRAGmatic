@@ -19,5 +19,10 @@ spec:
         ports:
         - containerPort: 9200
         - containerPort: 8000
+        resources:
+          limits:
+            nvidia.com/gpu: 1
+          requests:
+            nvidia.com/gpu: 1
       restartPolicy: Never
   backoffLimit: 1

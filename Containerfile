@@ -50,4 +50,4 @@ RUN chmod -R 777 /app
 ENV TRANSFORMERS_CACHE="/app/cache"
 
 # Use the script as the entrypoint
-CMD ["./app/finish_setup.sh"]
+CMD ["./finish_setup.sh"]

@@ -9,8 +9,7 @@ from haystack.components.writers import DocumentWriter
 from settings import DEFAULT_SETTINGS
 
 def run_indexing_pipeline(settings=DEFAULT_SETTINGS):
-    document_store = ElasticsearchDocumentStore(host=settings["elasticsearch_host"],
-                                                port=settings["elasticsearch_port"],
+    document_store = ElasticsearchDocumentStore(hosts=settings["elasticsearch_host_url"],
                                                 username=settings["elasticsearch_username"],
                                                 password=settings["elasticsearch_password"],
                                                 index=settings["elasticsearch_index_name"],
