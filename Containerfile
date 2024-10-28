@@ -31,6 +31,8 @@ RUN pip install --no-cache-dir vllm haystack-ai trafilatura lxml_html_clean elas
 
 # Set the working directory in the container
 WORKDIR /app
+
+# Make sure to permission issues arise
 RUN chmod -R 777 /app
 
 # Clone the Haystack application source code from the Github repository
@@ -47,16 +49,5 @@ RUN mkdir cache
 RUN chmod -R 777 /app
 ENV TRANSFORMERS_CACHE="/app/cache"
 
-# Create a script to run Elasticsearch, vLLM and Haystack
-RUN echo "#!/bin/bash\n\
-/elasticsearch/bin/elasticsearch &\n\
-vllm serve --host 0.0.0.0 --port 8000 --model mistralai/Mistral-7B-Instruct-v0.1 &\n" > /app/start_services.sh
-
-RUN chmod -R 777 /app/start_services.sh
-
 # Use the script as the entrypoint
-# CMD ["./app/start_services.sh"]
-
-CMD /bin/bash -c "/elasticsearch/bin/elasticsearch > /app/elasticsearch.log 2>&1 & \
-                  vllm serve --host 0.0.0.0 --port 8000 --model mistralai/Mistral-7B-Instruct-v0.1 > /app/vllm.log 2>&1 & \
-                  wait"
+CMD ["./app/finish_setup.sh"]

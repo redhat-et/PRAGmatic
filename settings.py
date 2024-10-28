@@ -4,7 +4,10 @@ DEFAULT_SETTINGS = {
 
     "llm": "mistralai/Mistral-7B-Instruct-v0.1",
 
-    "elasticsearch_host_url": "http://localhost:9200",
+    "elasticsearch_host": "localhost",
+    "elasticsearch_port": 9200,
+    "elasticsearch_username": "elastic",
+    "elasticsearch_password": "password",
     "elasticsearch_index_name": "test_index",
     "elasticsearch_top_k": 1,
 

@@ -33,8 +33,12 @@ BASE_RAG_PROMPT = """You are an assistant for question-answering tasks.
 def run_rag_pipeline(query, settings=DEFAULT_SETTINGS):
     text_embedder = SentenceTransformersTextEmbedder(model=settings["embedding_model"])
 
-    document_store = ElasticsearchDocumentStore(hosts=settings["elasticsearch_host_url"],
-                                                index=settings["elasticsearch_index_name"])
+    document_store = ElasticsearchDocumentStore(host=settings["elasticsearch_host"],
+                                                port=settings["elasticsearch_port"],
+                                                username=settings["elasticsearch_username"],
+                                                password=settings["elasticsearch_password"],
+                                                index=settings["elasticsearch_index_name"],
+                                                scheme="http")
     bm25_retriever = ElasticsearchBM25Retriever(document_store=document_store, top_k=settings["elasticsearch_top_k"])
     embedding_retriever = ElasticsearchEmbeddingRetriever(document_store=document_store, top_k=settings["elasticsearch_top_k"])
 
