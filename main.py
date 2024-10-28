@@ -17,10 +17,6 @@ def main():
     parser.add_argument('overrides', nargs='*', help="Optionally override default settings as key=value")
 
     args = parser.parse_args()
-    if args.indexing and args.rag:
-        print("Wrong usage: cannot run in indexing mode and RAG mode at the same time.")
-        return
-
     if not args.indexing and not args.rag:
         print("Wrong usage: either indexing mode or RAG mode must be specified.")
         return
@@ -38,7 +34,7 @@ def main():
 
     if args.indexing:
         run_indexing_pipeline(settings)
-    else:
+    if args.rag:
         print(run_rag_pipeline(args.query, settings))
 
 

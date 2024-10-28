@@ -72,4 +72,8 @@ python main.py -i\n" > /app/start_services.sh
 RUN chmod -R 777 /app/start_services.sh
 
 # Use the script as the entrypoint
-CMD ["/app/start_services.sh"]
+# CMD ["./app/start_services.sh"]
+
+CMD /bin/bash -c "/elasticsearch/bin/elasticsearch > /app/elasticsearch.log 2>&1 & \
+                  vllm serve --host 0.0.0.0 --port 8000 --model mistralai/Mistral-7B-Instruct-v0.1 > /app/vllm.log 2>&1 & \
+                  wait"
