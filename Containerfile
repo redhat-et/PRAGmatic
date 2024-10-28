@@ -1,6 +1,9 @@
 # Start with a base image that has Python and other necessary components
 FROM python:3.10-slim
 
+# Switch to root to avoid permissions issues
+USER root
+
 # Install required system dependencies
 RUN apt-get update && apt-get install -y \
     wget \
