@@ -18,8 +18,7 @@ RUN wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-8.15
     && shasum -a 512 -c elasticsearch-8.15.3-linux-x86_64.tar.gz.sha512 \
     && tar -xzf elasticsearch-8.15.3-linux-x86_64.tar.gz \
     && mv elasticsearch-8.15.3 /elasticsearch \
-    && chown -R root:root /elasticsearch \
-    && chmod -R 777 /elasticsearch/config
+    && chmod -R 777 /elasticsearch
 
 # Create the Elasticsearch keystore during the image build process to avoid running into permissions issues
 RUN /elasticsearch/bin/elasticsearch-keystore create
@@ -45,7 +44,7 @@ ENV HAYSTACK_TELEMETRY_ENABLED="False"
 
 # Setup Transformers cache
 RUN mkdir cache
-RUN chmod -R 777 /app/cache
+RUN chmod -R 777 /app
 ENV TRANSFORMERS_CACHE="/app/cache"
 
 # Create a script to run Elasticsearch, vLLM and Haystack
@@ -69,9 +68,6 @@ echo 'vLLM is running.'\n\
 \n\
 # Run Haystack pipeline in indexing mode\n\
 python main.py -i\n" > /app/start_services.sh
-
-USER root
-RUN chmod -R 777 /app/start_services.sh
 
 # Use the script as the entrypoint
 CMD ["/app/start_services.sh"]
