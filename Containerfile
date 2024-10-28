@@ -38,17 +38,17 @@ RUN chmod -R 777 /app
 # Clone the Haystack application source code from the Github repository
 RUN git clone https://github.com/ilya-kolchinsky/RHOAI-RAG.git /app
 
-# Define environment variables for Elasticsearch
-ENV ES_JAVA_OPTS="-Xms512m -Xmx512m"
-
-# Disable Haystack telemetry collection
-ENV HAYSTACK_TELEMETRY_ENABLED="False"
-
 # Setup Transformers cache
 RUN mkdir cache
 RUN chmod -R 777 /app
 ENV TRANSFORMERS_CACHE="/app/cache"
 ENV SENTENCE_TRANSFORMERS_HOME="/app/cache"
+
+# Define environment variables for Elasticsearch
+ENV ES_JAVA_OPTS="-Xms512m -Xmx512m"
+
+# Disable Haystack telemetry collection
+ENV HAYSTACK_TELEMETRY_ENABLED="False"
 
 # Use the script as the entrypoint
 CMD /app/finish_setup.sh
