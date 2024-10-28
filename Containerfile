@@ -6,6 +6,7 @@ USER root
 
 # Install required system dependencies
 RUN apt-get update && apt-get install -y \
+    curl \
     wget \
     gnupg \
     unzip \
@@ -23,7 +24,7 @@ RUN wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-8.15
 EXPOSE 9200 8000
 
 # Install vLLM and required Python packages
-RUN pip install --no-cache-dir vllm haystack-ai elasticsearch elasticsearch-haystack transformers[torch,sentencepiece] sentence-transformers
+RUN pip install --no-cache-dir vllm haystack-ai elasticsearch elasticsearch-haystack transformers[torch,sentencepiece] sentence-transformers trafilatura
 
 # Set the working directory in the container
 WORKDIR /app
@@ -44,7 +45,7 @@ ENV TRANSFORMERS_CACHE="/app/cache"
 
 # Create a script to run Elasticsearch, vLLM and Haystack
 RUN echo "#!/bin/bash\n\
-/elasticsearch/bin/elasticsearch &\n\
+/elasticsearch-8.15.3/bin/elasticsearch > /app/elasticsearch.log 2>&1 &\n\
 vllm serve --host 0.0.0.0 --port 8000 --model mistralai/Mistral-7B-Instruct-v0.1 &\n\
 \n\
 # Check if Elasticsearch is running\n\
