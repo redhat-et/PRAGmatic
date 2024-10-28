@@ -8,11 +8,8 @@ until curl -s http://localhost:9200 >/dev/null; do
     sleep 5
 done
 
-# Set the password for the elastic user using REST API
-curl -X POST "http://localhost:9200/_security/user/elastic/_password" \
-    -H "Content-Type: application/json" \
-    -u elastic:<default_password> -d '{"password": "<password"}'
+echo y | /elasticsearch/bin/elasticsearch-reset-password -u elastic > /app/elastic_password.log
 
 # Start the vLLM server
-python -m vllm.entrypoints.openai.api_server --host 0.0.0.0 --port 8000 --model mistralai/Mistral-7B-Instruct-v0.1 > /app/vllm.log 2>&1 &
+python -m vllm.entrypoints.openai.api_server --host 0.0.0.0 --port 8000 --model ibm-granite/granite-3.0-2b-instruct > /app/vllm.log 2>&1 &
 wait

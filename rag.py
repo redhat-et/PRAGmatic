@@ -10,6 +10,7 @@ from haystack_integrations.components.retrievers.elasticsearch import Elasticsea
     ElasticsearchBM25Retriever
 
 from settings import DEFAULT_SETTINGS
+from utils import create_elastic_auth_string
 
 BASE_RAG_PROMPT = """You are an assistant for question-answering tasks. 
 
@@ -34,10 +35,8 @@ def run_rag_pipeline(query, settings=DEFAULT_SETTINGS):
     text_embedder = SentenceTransformersTextEmbedder(model=settings["embedding_model"])
 
     document_store = ElasticsearchDocumentStore(hosts=settings["elasticsearch_host_url"],
-                                                username=settings["elasticsearch_username"],
-                                                password=settings["elasticsearch_password"],
-                                                index=settings["elasticsearch_index_name"],
-                                                scheme="http")
+                                                basic_auth=create_elastic_auth_string(settings),
+                                                index=settings["elasticsearch_index_name"])
     bm25_retriever = ElasticsearchBM25Retriever(document_store=document_store, top_k=settings["elasticsearch_top_k"])
     embedding_retriever = ElasticsearchEmbeddingRetriever(document_store=document_store, top_k=settings["elasticsearch_top_k"])
 

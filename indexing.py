@@ -7,13 +7,13 @@ from haystack.components.preprocessors import DocumentSplitter, DocumentCleaner
 from haystack.components.writers import DocumentWriter
 
 from settings import DEFAULT_SETTINGS
+from utils import create_elastic_auth_string
+
 
 def run_indexing_pipeline(settings=DEFAULT_SETTINGS):
     document_store = ElasticsearchDocumentStore(hosts=settings["elasticsearch_host_url"],
-                                                username=settings["elasticsearch_username"],
-                                                password=settings["elasticsearch_password"],
-                                                index=settings["elasticsearch_index_name"],
-                                                scheme="http")
+                                                basic_auth=create_elastic_auth_string(settings),
+                                                index=settings["elasticsearch_index_name"])
 
     fetcher = LinkContentFetcher()
     converter = HTMLToDocument()

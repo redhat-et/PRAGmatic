@@ -48,6 +48,7 @@ ENV HAYSTACK_TELEMETRY_ENABLED="False"
 RUN mkdir cache
 RUN chmod -R 777 /app
 ENV TRANSFORMERS_CACHE="/app/cache"
+ENV SENTENCE_TRANSFORMERS_HOME="/app/cache"
 
 # Use the script as the entrypoint
-CMD ["./finish_setup.sh"]
+CMD /app/finish_setup.sh
