@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: container
-          image: 'docker.elastic.co/elasticsearch/elasticsearch:7.17.25'
+          image: 'docker.elastic.co/elasticsearch/elasticsearch:8.15.3'
           ports:
             - containerPort: 8080
               protocol: TCP

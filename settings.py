@@ -5,6 +5,8 @@ DEFAULT_SETTINGS = {
     "llm": "ibm-granite/granite-3.0-2b-instruct",
 
     "elasticsearch_host_url": "http://elasticsearch-service:9200",
+    "elasticsearch_user": "elastic",
+    "elasticsearch_password": "Q8eMMXnh0qM2kcIziDUa",
     "elasticsearch_index_name": "test_index",
     "elasticsearch_top_k": 1,
 

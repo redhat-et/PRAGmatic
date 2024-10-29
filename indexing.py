@@ -11,6 +11,7 @@ from settings import DEFAULT_SETTINGS
 
 def run_indexing_pipeline(settings=DEFAULT_SETTINGS):
     document_store = ElasticsearchDocumentStore(hosts=settings["elasticsearch_host_url"],
+                                                basic_auth=(settings["elasticsearch_user"], settings["elasticsearch_password"]),
                                                 index=settings["elasticsearch_index_name"])
 
     fetcher = LinkContentFetcher()
