@@ -18,7 +18,7 @@ def run_indexing_pipeline(settings=DEFAULT_SETTINGS):
 
     cleaner = DocumentCleaner()
     splitter = DocumentSplitter()
-    doc_embedder = SentenceTransformersDocumentEmbedder(model=settings["embedding_model"])
+    # doc_embedder = SentenceTransformersDocumentEmbedder(model=settings["embedding_model"])
     writer = DocumentWriter(document_store)
 
     pipeline = Pipeline()
@@ -26,13 +26,14 @@ def run_indexing_pipeline(settings=DEFAULT_SETTINGS):
     pipeline.add_component("converter", converter)
     pipeline.add_component("cleaner", cleaner)
     pipeline.add_component("splitter", splitter)
-    pipeline.add_component("doc_embedder", doc_embedder)
+    # pipeline.add_component("doc_embedder", doc_embedder)
     pipeline.add_component("writer", writer)
 
     pipeline.connect("fetcher", "converter")
     pipeline.connect("converter", "cleaner")
     pipeline.connect("cleaner", "splitter")
-    pipeline.connect("splitter", "doc_embedder")
-    pipeline.connect("doc_embedder", "writer")
+    pipeline.connect("splitter", "writer")
+    # pipeline.connect("splitter", "doc_embedder")
+    # pipeline.connect("doc_embedder", "writer")
 
     pipeline.run({"fetcher": {"urls": settings["urls"]}})

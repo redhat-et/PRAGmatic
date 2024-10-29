@@ -31,14 +31,14 @@ BASE_RAG_PROMPT = """You are an assistant for question-answering tasks.
     """
 
 def run_rag_pipeline(query, settings=DEFAULT_SETTINGS):
-    text_embedder = SentenceTransformersTextEmbedder(model=settings["embedding_model"])
+    # text_embedder = SentenceTransformersTextEmbedder(model=settings["embedding_model"])
 
     document_store = ElasticsearchDocumentStore(hosts=settings["elasticsearch_host_url"],
                                                 index=settings["elasticsearch_index_name"])
     bm25_retriever = ElasticsearchBM25Retriever(document_store=document_store, top_k=settings["elasticsearch_top_k"])
-    embedding_retriever = ElasticsearchEmbeddingRetriever(document_store=document_store, top_k=settings["elasticsearch_top_k"])
+    # embedding_retriever = ElasticsearchEmbeddingRetriever(document_store=document_store, top_k=settings["elasticsearch_top_k"])
 
-    document_joiner = DocumentJoiner()
+    # document_joiner = DocumentJoiner()
 
     ranker = TransformersSimilarityRanker(model=settings["ranking_model"])
 
@@ -51,22 +51,23 @@ def run_rag_pipeline(query, settings=DEFAULT_SETTINGS):
     )
 
     pipeline = Pipeline()
-    pipeline.add_component("text_embedder", text_embedder)
-    pipeline.add_component("embedding_retriever", embedding_retriever)
+    # pipeline.add_component("text_embedder", text_embedder)
+    # pipeline.add_component("embedding_retriever", embedding_retriever)
     pipeline.add_component("bm25_retriever", bm25_retriever)
-    pipeline.add_component("document_joiner", document_joiner)
+    # pipeline.add_component("document_joiner", document_joiner)
     pipeline.add_component("ranker", ranker)
     pipeline.add_component("prompt_builder", prompt_builder)
     pipeline.add_component("llm", llm)
 
-    pipeline.connect("text_embedder", "embedding_retriever")
-    pipeline.connect("bm25_retriever", "document_joiner")
-    pipeline.connect("embedding_retriever", "document_joiner")
-    pipeline.connect("document_joiner", "ranker")
+    # pipeline.connect("text_embedder", "embedding_retriever")
+    # pipeline.connect("bm25_retriever", "document_joiner")
+    # pipeline.connect("embedding_retriever", "document_joiner")
+    # pipeline.connect("document_joiner", "ranker")
+    pipeline.connect("bm25_retriever", "ranker")
     pipeline.connect("ranker", "prompt_builder.documents")
     pipeline.connect("prompt_builder", "llm")
 
-    result = pipeline.run({"text_embedder": {"text": query},
+    result = pipeline.run({  # "text_embedder": {"text": query},
                            "bm25_retriever": {"query": query},
                            "ranker": {"query": query},
                            "prompt_builder": {"query": query}})
