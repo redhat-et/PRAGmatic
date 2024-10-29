@@ -4,13 +4,11 @@ DEFAULT_SETTINGS = {
 
     "llm": "ibm-granite/granite-3.0-2b-instruct",
 
-    "elasticsearch_host_url": "http://localhost:9200",
-    "elasticsearch_user": "elastic",
-    "elasticsearch_password_file": "/app/elastic_password.log",
+    "elasticsearch_host_url": "http://elasticsearch-service:9200",
     "elasticsearch_index_name": "test_index",
     "elasticsearch_top_k": 1,
 
-    "vllm_base_url": "http://localhost:8000/v1",
+    "vllm_base_url": "http://vllm-service:8000/v1",
 
     "urls": [
         "https://docs.openshift.com/container-platform/4.17/installing/overview/index.html",

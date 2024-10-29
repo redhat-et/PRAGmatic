@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: rag-poc
+  name: vllm
+  annotations: {}
+spec:
+  selector:
+    matchLabels:
+      app: vllm
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: vllm
+    spec:
+      containers:
+        - name: vllm-server
+          image: 'quay.io/rh-aiservices-bu/vllm-openai-ubi9:0.4.2'
+          args: [
+            "--model",
+            "mistralai/Mistral-7B-Instruct-v0.2",
+            "--download-dir",
+            "/models-cache",
+            "--dtype", "float16",
+            "--max-model-len", "6144" ]
+          ports:
+            - name: http
+              containerPort: 8000
+              protocol: TCP
+          env:
+            - name: HUGGING_FACE_HUB_TOKEN
+              value: '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'
+          resources:
+            limits:
+              nvidia.com/gpu: '1'
+            requests:
+              nvidia.com/gpu: '1'
+          volumeMounts:
+            - name: models-cache
+              mountPath: /models-cache
+            - name: shm
+              mountPath: /dev/shm
+      volumes:
+        - name: models-cache
+          persistentVolumeClaim:
+            claimName: vllm-models-cache
+        - name: shm
+          emptyDir:
+            medium: Memory
+            sizeLimit: 1Gi
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+  paused: false
