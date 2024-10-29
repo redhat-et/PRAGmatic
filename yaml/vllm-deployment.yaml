@@ -30,7 +30,7 @@ spec:
               protocol: TCP
           env:
             - name: HUGGING_FACE_HUB_TOKEN
-              value: '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'
+              value: ''
           resources:
             limits:
               nvidia.com/gpu: '1'
