@@ -1,5 +1,5 @@
 DEFAULT_SETTINGS = {
-    "embedding_model": "sentence-transformers/all-mpnet-base-v2",
+    "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
     "ranking_model": "BAAI/bge-reranker-base",
 
     "llm": "ibm-granite/granite-3.0-2b-instruct",
