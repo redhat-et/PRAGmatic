@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Haystack and required Python packages
-RUN pip install haystack-ai trafilatura lxml_html_clean elasticsearch-haystack transformers[torch,sentencepiece] sentence-transformers
+RUN pip install haystack-ai trafilatura lxml_html_clean elasticsearch==7.10.1 elasticsearch-haystack transformers[torch,sentencepiece] sentence-transformers
 
 # Set the working directory in the container
 WORKDIR /app
