@@ -2,13 +2,15 @@ DEFAULT_SETTINGS = {
     "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
     "ranking_model": "BAAI/bge-reranker-base",
 
-    "llm": "ibm-granite/granite-3.0-2b-instruct",
+    "llm": "mistralai/Mistral-7B-Instruct-v0.2",
 
     "elasticsearch_host_url": "http://elasticsearch-service:9200",
     "elasticsearch_user": "elastic",
     "elasticsearch_password": "Q8eMMXnh0qM2kcIziDUa",
     "elasticsearch_index_name": "test_index",
     "elasticsearch_top_k": 1,
+
+    "milvus_host_url": "http://milvus-service:19530",
 
     "vllm_base_url": "http://vllm-service:8000/v1",
 
