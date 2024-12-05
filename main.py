@@ -11,7 +11,7 @@ def main():
     """
     The tool can be executed in one of the following four modes:
     1) Indexing mode (-i flag) - index a collection of documents from the given path.
-    2) Query mode (-q flag) - answer a given query with RAG using the previously indexed documents.
+    2) RAG query mode (-r flag) - answer a given query with RAG using the previously indexed documents.
     3) Evaluation mode (-e flag) - evaluate the RAG pipeline as specified in the settings.
     4) Server mode (-s flag) - run a FastAPI server accepting indexing and query requests.
     """
@@ -20,7 +20,7 @@ def main():
     parser.add_argument('-i', '--indexing', help='Index a set of documents in the document storage', action='store_true')
     parser.add_argument('--path', help='The path to a directory with the documents to be indexed.')
 
-    parser.add_argument('-q', '--query_mode', help='Answer a given query based on the indexed documents', action='store_true')
+    parser.add_argument('-r', '--rag', help='Answer a given query based on the indexed documents', action='store_true')
     parser.add_argument('--query', help='The query for the language model to answer.')
 
     parser.add_argument('-e', '--evaluation', help='Evaluate the RAG pipeline', action='store_true')
@@ -37,7 +37,6 @@ def main():
         print("Wrong usage: exactly one of the supported operation modes (indexing, query, evaluation or server) must be specified.")
         return
 
-    settings = dict(DEFAULT_SETTINGS)
     custom_settings = {}
     for override in args.overrides:
         if '=' in override:
