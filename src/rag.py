@@ -35,7 +35,6 @@ class RagPipelineWrapper(CommonPipelineWrapper):
         self._query = query
 
         self._evaluation_mode = evaluation_mode
-        self._document_endpoint_name = None
 
     def _add_embedder(self, query):
         embedder = SentenceTransformersTextEmbedder(model=self._settings["embedding_model"])
@@ -74,11 +73,10 @@ class RagPipelineWrapper(CommonPipelineWrapper):
 
         if retriever_type == "sparse":
             self._add_component("retriever", sparse_retriever, component_args={"query": self._query})
-            self._document_endpoint_name = "retriever"
         elif retriever_type == "dense":
             self._add_embedder(self._query)
-            self._add_component("retriever", dense_retriever)
-            self._document_endpoint_name = "retriever"
+            self._add_component("retriever", dense_retriever,
+                                component_from_connect_point="embedder.embedding", component_to_connect_point="retriever.query_embedding")
         else:  # retriever_type == "hybrid"
             self._add_component("sparse_retriever", sparse_retriever, component_args={"query": self._query}, should_connect=False)
             self._add_embedder(self._query)
@@ -86,11 +84,10 @@ class RagPipelineWrapper(CommonPipelineWrapper):
             self._add_component("document_joiner", DocumentJoiner(), should_connect=False)
 
             # manually connect the components to create a hybrid retrieval topology
-            self._pipeline.connect("embedder", "dense_retriever")
+            self._pipeline.connect("embedder.embedding", "dense_retriever.query_embedding")
             self._pipeline.connect("sparse_retriever", "document_joiner")
             self._pipeline.connect("dense_retriever", "document_joiner")
             self._set_last_connect_point("document_joiner")
-            self._document_endpoint_name = "document_joiner"
 
     def _add_ranker(self):
         if not self._settings["ranker_enabled"]:
