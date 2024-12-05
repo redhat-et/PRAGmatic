@@ -1,7 +1,7 @@
-from evaluation import Evaluator
-from indexing import LocalJSONIndexingPipelineWrapper
-from rag import RagPipelineWrapper
-from utils import produce_custom_settings
+from src.evaluation import Evaluator
+from src.indexing import LocalJSONIndexingPipelineWrapper
+from src.rag import RagPipelineWrapper
+from src.utils import produce_custom_settings
 
 
 def index_path_for_rag(path, **kwargs):

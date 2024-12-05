@@ -13,17 +13,24 @@ RUN apt-get update && apt-get install -y \
     git \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Haystack and required Python packages
-RUN pip install haystack-ai trafilatura lxml_html_clean elasticsearch elasticsearch-haystack transformers[torch,sentencepiece] sentence-transformers
-
-# Set the working directory in the container
-WORKDIR /app
+# Install the required Python packages
+RUN pip install haystack-ai trafilatura lxml_html_clean pymilvus milvus-haystack transformers[torch,sentencepiece] sentence-transformers docling
 
 # Clone the Haystack application source code from the Github repository
 RUN git clone https://github.com/ilya-kolchinsky/RHOAI-RAG.git /app
 
+# Set the working directory in the container
+WORKDIR /app
+
+# Install project dependencies
+RUN pip install -r requirements.txt
+
 # Disable Haystack telemetry collection
 ENV HAYSTACK_TELEMETRY_ENABLED="False"
+
+# Setup the directory for documents to index
+RUN mkdir docs
+RUN docling --to json --output docs --verbose https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/7/pdf/system_administrators_guide/Red_Hat_Enterprise_Linux-7-System_Administrators_Guide-en-US.pdf
 
 # Setup Transformers cache
 RUN mkdir cache
@@ -31,6 +38,8 @@ ENV TRANSFORMERS_CACHE="/app/cache"
 
 # Make sure no permission issues arise
 RUN chmod -R 777 /app
+RUN chmod -R 777 /app/docs
+RUN chmod -R 777 /app/cache
 
 # Default command to keep the container running
 CMD ["sleep", "infinity"]
