@@ -1,6 +1,6 @@
 import json
 
-from src.indexing import LocalJSONIndexingPipelineWrapper
+from src.indexing import LocalFileIndexingPipelineWrapper
 from src.pipeline import CommonPipelineWrapper
 from haystack_integrations.components.evaluators.ragas import RagasEvaluator
 
@@ -37,7 +37,7 @@ class Evaluator(object):
         self._settings = settings
         self._questions, self._ground_truth_answers = self._load_questions_and_answers()
 
-        self._indexing_pipeline = LocalJSONIndexingPipelineWrapper(settings, settings["eval_documents_path"])
+        self._indexing_pipeline = LocalFileIndexingPipelineWrapper(settings, settings["eval_documents_path"])
         self._rag_pipeline = RagPipelineWrapper(settings, evaluation_mode=True)
 
         for pipeline in [self._indexing_pipeline, self._rag_pipeline]:

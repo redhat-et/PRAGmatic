@@ -1,12 +1,12 @@
 from src.evaluation import Evaluator
-from src.indexing import LocalJSONIndexingPipelineWrapper
+from src.indexing import LocalFileIndexingPipelineWrapper
 from src.rag import RagPipelineWrapper
 from src.utils import produce_custom_settings
 
 
 def index_path_for_rag(path, **kwargs):
     settings = produce_custom_settings(kwargs)
-    pipeline = LocalJSONIndexingPipelineWrapper(settings, path)
+    pipeline = LocalFileIndexingPipelineWrapper(settings, path)
     pipeline.build_pipeline()
     return pipeline.run()
 

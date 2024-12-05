@@ -2,7 +2,7 @@ import os
 
 from haystack.components.embedders import SentenceTransformersDocumentEmbedder
 from haystack.components.fetchers import LinkContentFetcher
-from haystack.components.converters import HTMLToDocument, JSONConverter
+from haystack.components.converters import HTMLToDocument, TextFileToDocument
 from haystack.components.preprocessors import DocumentSplitter, DocumentCleaner
 from haystack.components.writers import DocumentWriter
 
@@ -69,7 +69,7 @@ class RemoteHTMLIndexingPipelineWrapper(IndexingPipelineWrapper):
         self._add_component("converter", converter)
 
 
-class LocalJSONIndexingPipelineWrapper(IndexingPipelineWrapper):
+class LocalFileIndexingPipelineWrapper(IndexingPipelineWrapper):
     def __init__(self, settings, doc_path):
         super().__init__(settings)
 
@@ -83,5 +83,5 @@ class LocalJSONIndexingPipelineWrapper(IndexingPipelineWrapper):
         return
 
     def _add_converter(self):
-        converter = JSONConverter(content_key="body")
+        converter = TextFileToDocument(content_key="body")
         self._add_component("converter", converter, component_args={"sources": self._json_files})
