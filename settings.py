@@ -1,3 +1,5 @@
+from haystack_integrations.components.evaluators.ragas import RagasMetric
+
 DEFAULT_SETTINGS = {
     # basic settings
     "vector_db_type": "milvus",
@@ -25,6 +27,20 @@ DEFAULT_SETTINGS = {
     "top_k": 1,
     "cleaner_enabled": False,
     "ranker_enabled": False,
+
+    # evaluation metrics
+    "eval_documents_path": "./docs",
+    "eval_questions_answers_path": "./qa.txt",
+    "eval_ragas_metrics": {
+        RagasMetric.FAITHFULNESS: {
+            "params": None,
+            "required_data": ['questions', 'contexts', 'responses'],
+        },
+        RagasMetric.ANSWER_CORRECTNESS: {
+            "params": {"weights": [0.5, 0.2]},
+            "required_data": ['questions', 'ground_truths', 'responses'],
+        },
+    },
 
 
     # example config only from this point on

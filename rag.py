@@ -1,4 +1,4 @@
-from haystack.components.builders import PromptBuilder
+from haystack.components.builders import PromptBuilder, AnswerBuilder
 from haystack.components.generators import OpenAIGenerator
 from haystack.components.joiners import DocumentJoiner
 from haystack.components.rankers import TransformersSimilarityRanker
@@ -29,9 +29,12 @@ BASE_RAG_PROMPT = """You are an assistant for question-answering tasks.
     """
 
 class RagPipelineWrapper(CommonPipelineWrapper):
-    def __init__(self, settings, query=None):
+    def __init__(self, settings, query=None, evaluation_mode=False):
         super().__init__(settings)
         self._query = query
+
+        self._evaluation_mode = evaluation_mode
+        self._document_endpoint_name = None
 
     def __init_sparse_retriever(self):
         vector_db_type = self._settings["vector_db_type"]
@@ -66,9 +69,11 @@ class RagPipelineWrapper(CommonPipelineWrapper):
 
         if retriever_type == "sparse":
             self._add_component("retriever", sparse_retriever, component_args={"query": self._query})
+            self._document_endpoint_name = "retriever"
         elif retriever_type == "dense":
             self._add_embedder(self._query)
             self._add_component("retriever", dense_retriever)
+            self._document_endpoint_name = "retriever"
         else:  # retriever_type == "hybrid"
             self._add_component("sparse_retriever", sparse_retriever, component_args={"query": self._query}, should_connect=False)
             self._add_embedder(self._query)
@@ -80,6 +85,7 @@ class RagPipelineWrapper(CommonPipelineWrapper):
             self._pipeline.connect("sparse_retriever", "document_joiner")
             self._pipeline.connect("dense_retriever", "document_joiner")
             self._set_last_connect_point("document_joiner")
+            self._document_endpoint_name = "document_joiner"
 
     def _add_ranker(self):
         if not self._settings["ranker_enabled"]:
@@ -101,11 +107,28 @@ class RagPipelineWrapper(CommonPipelineWrapper):
         )
         self._add_component("llm", llm)
 
+    def _add_answer_builder(self):
+        if not self._evaluation_mode:
+            return
+        self._add_component("answer_builder", AnswerBuilder(), component_args={"query": self._query}, should_connect=False)
+        self._pipeline.connect("llm.replies", "answer_builder.replies")
+        self._pipeline.connect("retriever", "answer_builder.documents")
+
     def build_pipeline(self):
         self._add_retrievers()
         self._add_ranker()
         self._add_prompt_builder()
         self._add_llm()
+        self._add_answer_builder()
+
+    def get_evaluation_mode(self):
+        return self._evaluation_mode
+
+    def set_evaluation_mode(self, new_evaluation_mode):
+        should_rebuild_pipeline = not self._evaluation_mode and new_evaluation_mode
+        self._evaluation_mode = new_evaluation_mode
+        if should_rebuild_pipeline:
+            self._rebuild_pipeline()
 
     def run(self, query=None):
         if query is not None:
@@ -116,4 +139,8 @@ class RagPipelineWrapper(CommonPipelineWrapper):
                         config_dict[key] = query
 
         result = super().run()
+
+        if self._evaluation_mode:
+            return result["answer_builder"]["answers"][0]
+
         return result["llm"]["replies"][0]

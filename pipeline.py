@@ -8,16 +8,22 @@ from milvus_haystack import MilvusDocumentStore
 
 class PipelineWrapper(object, ABC):
     def __init__(self):
-        self._pipeline = Pipeline()
-        self._args = {}
-
-        self.__last_connect_point = None
+        self._reset_pipeline()
 
     def get_pipeline(self):
         return self._pipeline
 
     def get_pipeline_args(self):
         return self._args
+
+    def _reset_pipeline(self):
+        self._pipeline = Pipeline()
+        self._args = {}
+        self.__last_connect_point = None
+
+    def _rebuild_pipeline(self):
+        self._reset_pipeline()
+        self.build_pipeline()
 
     def _add_component(self, component_name, component_obj, component_args=None, should_connect=True,
                        component_from_connect_point=None, component_to_connect_point=None):
@@ -41,6 +47,9 @@ class PipelineWrapper(object, ABC):
 
     def run(self):
         return self._pipeline.run(self._args)
+
+    def build_pipeline(self):
+        raise NotImplementedError()
 
 
 class CommonPipelineWrapper(PipelineWrapper, ABC):
@@ -72,6 +81,3 @@ class CommonPipelineWrapper(PipelineWrapper, ABC):
                                               index=self._settings["elasticsearch_index_name"])
 
         raise ValueError(f"Unsupported vector DB type: {vector_db_type}")
-
-    def build_pipeline(self):
-        raise NotImplementedError()

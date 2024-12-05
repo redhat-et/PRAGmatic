@@ -3,6 +3,7 @@ import argparse
 import uvicorn
 from fastapi import FastAPI
 
+from evaluation import Evaluator
 from indexing import LocalJSONIndexingPipelineWrapper
 from rag import RagPipelineWrapper
 from settings import DEFAULT_SETTINGS
@@ -23,6 +24,8 @@ def main():
     parser.add_argument('-q', '--query_mode', help='Answer a given query based on the indexed documents', action='store_true')
     parser.add_argument('--query', help='The query for the language model to answer.')
 
+    parser.add_argument('-e', '--evaluation', help='Evaluate the RAG pipeline', action='store_true')
+
     parser.add_argument('-s', '--server', help='Run a FastAPI server to serve the RAG pipeline', action='store_true')
     parser.add_argument('--port', help='The port for the server to listen on.', type=int, default=8000)
 
@@ -31,8 +34,8 @@ def main():
 
     args = parser.parse_args()
 
-    if sum([args.indexing, args.rag, args.server]) != 1:
-        print("Wrong usage: exactly one of the supported operation modes (indexing, query or server) must be specified.")
+    if sum([args.indexing, args.rag, args.evaluation, args.server]) != 1:
+        print("Wrong usage: exactly one of the supported operation modes (indexing, query, evaluation or server) must be specified.")
         return
 
     settings = dict(DEFAULT_SETTINGS)
@@ -61,6 +64,10 @@ def main():
         pipeline = RagPipelineWrapper(settings, args.query)
         pipeline.build_pipeline()
         print(pipeline.run())
+
+    if args.evaluation:
+        evaluator = Evaluator(settings)
+        print(evaluator.evaluate_rag_pipeline())
 
     if args.server:
         rag_pipeline = RagPipelineWrapper(settings)
