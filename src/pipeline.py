@@ -62,9 +62,9 @@ class CommonPipelineWrapper(PipelineWrapper, ABC):
         if vector_db_type.lower() == "milvus":
             milvus_deployment_type = self._settings["milvus_deployment_type"]
             if milvus_deployment_type.lower() == "lite":
-                milvus_connection_args = self._settings["milvus_file_path"]
+                milvus_connection_args = {"uri": self._settings["milvus_file_path"]}
             elif milvus_deployment_type.lower() == "standalone":
-                milvus_connection_args = self._settings["milvus_server_url"]
+                milvus_connection_args = {"uri": self._settings["milvus_server_url"]}
             else:
                 raise ValueError(f"Unsupported Milvus deployment type: {milvus_deployment_type}")
             return MilvusDocumentStore(connection_args=milvus_connection_args, drop_old=self._settings["drop_old_collection"])
