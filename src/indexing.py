@@ -83,5 +83,5 @@ class LocalFileIndexingPipelineWrapper(IndexingPipelineWrapper):
         return
 
     def _add_converter(self):
-        converter = TextFileToDocument(content_key="body")
+        converter = TextFileToDocument()
         self._add_component("converter", converter, component_args={"sources": self._json_files})
