@@ -17,7 +17,7 @@ RUN apt-get update && apt-get install -y \
 RUN pip install haystack-ai trafilatura lxml_html_clean pymilvus milvus-haystack transformers[torch,sentencepiece] sentence-transformers docling
 
 # Clone the Haystack application source code from the Github repository
-RUN git clone https://github.com/ilya-kolchinsky/RHOAI-RAG.git /app
+RUN git clone https://github.com/redhat-et/RHELAI-RHOAI-RAG.git /app
 
 # Set the working directory in the container
 WORKDIR /app
