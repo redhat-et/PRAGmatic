@@ -3,18 +3,17 @@ import argparse
 import uvicorn
 from fastapi import FastAPI
 
-from evaluation import Evaluator
-from indexing import LocalJSONIndexingPipelineWrapper
-from rag import RagPipelineWrapper
+from api import index_path_for_rag, execute_rag_query, evaluate_rag_pipeline
 from settings import DEFAULT_SETTINGS
 
 
 def main():
     """
-    The tool can be executed in one of the following three modes:
+    The tool can be executed in one of the following four modes:
     1) Indexing mode (-i flag) - index a collection of documents from the given path.
     2) Query mode (-q flag) - answer a given query with RAG using the previously indexed documents.
-    3) Server mode (-s flag) - run a FastAPI server accepting indexing and query requests.
+    3) Evaluation mode (-e flag) - evaluate the RAG pipeline as specified in the settings.
+    4) Server mode (-s flag) - run a FastAPI server accepting indexing and query requests.
     """
     parser = argparse.ArgumentParser(description='RAG Pipeline PoC')
 
@@ -39,11 +38,12 @@ def main():
         return
 
     settings = dict(DEFAULT_SETTINGS)
+    custom_settings = {}
     for override in args.overrides:
         if '=' in override:
             key, value = override.split('=', 1)
-            if key in settings:
-                settings[key] = value
+            if key in DEFAULT_SETTINGS:
+                custom_settings[key] = value
             else:
                 print(f"Warning: '{key}' is not a valid setting key. Ignoring it.")
         else:
@@ -53,36 +53,31 @@ def main():
         if args.path is None:
             print("Please specify the path containing the documents to index.")
             return
-        pipeline = LocalJSONIndexingPipelineWrapper(settings, args.path)
-        pipeline.build_pipeline()
-        pipeline.run()
+        index_path_for_rag(args.path, **custom_settings)
 
     if args.rag:
         if args.query is None:
             print("Please specify the query.")
             return
-        pipeline = RagPipelineWrapper(settings, args.query)
-        pipeline.build_pipeline()
-        print(pipeline.run())
+        print(execute_rag_query(args.query, **custom_settings))
 
     if args.evaluation:
-        evaluator = Evaluator(settings)
-        print(evaluator.evaluate_rag_pipeline())
+        print(evaluate_rag_pipeline(**custom_settings))
 
     if args.server:
-        rag_pipeline = RagPipelineWrapper(settings)
-        rag_pipeline.build_pipeline()
-        app = FastAPI(title="RAG Pipeline PoC", description="An API server for querying the RAG pipeline.")
-
-        @app.get("/query")
-        def query_rag_pipeline(query: str):
-            return rag_pipeline.run(query)
+        app = FastAPI(title="RAG Pipeline PoC", description="An API server for indexing RAG documents and querying/evaluating the RAG pipeline.")
 
         @app.get("/indexing")
         def run_indexing_pipeline(document_path: str):
-            indexing_pipeline = LocalJSONIndexingPipelineWrapper(settings, document_path)
-            indexing_pipeline.build_pipeline()
-            return indexing_pipeline.run()
+            return index_path_for_rag(document_path, **custom_settings)
+
+        @app.get("/query")
+        def query_rag_pipeline(query: str):
+            return execute_rag_query(query, **custom_settings)
+
+        @app.get("/eval")
+        def run_eval_pipeline():
+            return evaluate_rag_pipeline(**custom_settings)
 
         print(f"Starting FastAPI server on port {args.port}...")
         uvicorn.run(app, host="0.0.0.0", port=args.port)
