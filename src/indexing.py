@@ -78,5 +78,5 @@ class LocalJSONIndexingPipelineWrapper(IndexingPipelineWrapper):
         return
 
     def _add_converter(self):
-        converter = JSONConverter()
+        converter = JSONConverter(content_key="body")
         self._add_component("converter", converter, component_args={"sources": self._json_files})
