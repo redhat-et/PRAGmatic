@@ -3,8 +3,8 @@ from haystack.components.generators import OpenAIGenerator
 from haystack.components.joiners import DocumentJoiner
 from haystack.components.rankers import TransformersSimilarityRanker
 from haystack.utils import Secret
-from haystack_integrations.components.retrievers.elasticsearch import ElasticsearchEmbeddingRetriever, \
-    ElasticsearchBM25Retriever
+#from haystack_integrations.components.retrievers.elasticsearch import ElasticsearchEmbeddingRetriever, \
+#    ElasticsearchBM25Retriever
 from milvus_haystack import MilvusEmbeddingRetriever
 
 from src.pipeline import CommonPipelineWrapper
@@ -39,8 +39,8 @@ class RagPipelineWrapper(CommonPipelineWrapper):
     def __init_sparse_retriever(self):
         vector_db_type = self._settings["vector_db_type"]
         document_store = self._init_document_store()
-        if vector_db_type.lower() == "elasticsearch":
-            ElasticsearchBM25Retriever(document_store=document_store, top_k=self._settings["elasticsearch_top_k"])
+        #if vector_db_type.lower() == "elasticsearch":
+        #    return ElasticsearchBM25Retriever(document_store=document_store, top_k=self._settings["elasticsearch_top_k"])
 
         raise ValueError(f"Unsupported vector DB type for sparse retrieval: {vector_db_type}")
 
@@ -49,8 +49,8 @@ class RagPipelineWrapper(CommonPipelineWrapper):
         document_store = self._init_document_store()
         if vector_db_type.lower() == "milvus":
             return MilvusEmbeddingRetriever(document_store=document_store, top_k=self._settings["top_k"])
-        if vector_db_type.lower() == "elasticsearch":
-            return ElasticsearchEmbeddingRetriever(document_store=document_store, top_k=self._settings["top_k"])
+        #if vector_db_type.lower() == "elasticsearch":
+        #    return ElasticsearchEmbeddingRetriever(document_store=document_store, top_k=self._settings["top_k"])
 
         raise ValueError(f"Unsupported vector DB type: {vector_db_type}")
 

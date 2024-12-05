@@ -2,7 +2,7 @@ from abc import ABC
 
 from haystack import Pipeline
 from haystack.components.embedders import SentenceTransformersTextEmbedder
-from haystack_integrations.document_stores.elasticsearch import ElasticsearchDocumentStore
+# from haystack_integrations.document_stores.elasticsearch import ElasticsearchDocumentStore
 from milvus_haystack import MilvusDocumentStore
 
 
@@ -75,9 +75,9 @@ class CommonPipelineWrapper(PipelineWrapper, ABC):
                 raise ValueError(f"Unsupported Milvus deployment type: {milvus_deployment_type}")
             return MilvusDocumentStore(connection_args=milvus_connection_args, drop_old=self._settings["drop_old_collection"])
 
-        if vector_db_type.lower() == "elasticsearch":
-            return ElasticsearchDocumentStore(hosts=self._settings["elasticsearch_host_url"],
-                                              basic_auth=(self._settings["elasticsearch_user"], self._settings["elasticsearch_password"]),
-                                              index=self._settings["elasticsearch_index_name"])
+        #if vector_db_type.lower() == "elasticsearch":
+        #    return ElasticsearchDocumentStore(hosts=self._settings["elasticsearch_host_url"],
+        #                                      basic_auth=(self._settings["elasticsearch_user"], self._settings["elasticsearch_password"]),
+        #                                      index=self._settings["elasticsearch_index_name"])
 
         raise ValueError(f"Unsupported vector DB type: {vector_db_type}")
