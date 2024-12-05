@@ -6,7 +6,7 @@ from haystack.components.embedders import SentenceTransformersTextEmbedder
 from milvus_haystack import MilvusDocumentStore
 
 
-class PipelineWrapper(object, ABC):
+class PipelineWrapper(object):
     def __init__(self):
         self._reset_pipeline()
 
