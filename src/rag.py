@@ -7,7 +7,7 @@ from haystack_integrations.components.retrievers.elasticsearch import Elasticsea
     ElasticsearchBM25Retriever
 from milvus_haystack import MilvusEmbeddingRetriever
 
-from pipeline import CommonPipelineWrapper
+from src.pipeline import CommonPipelineWrapper
 
 BASE_RAG_PROMPT = """You are an assistant for question-answering tasks. 
 

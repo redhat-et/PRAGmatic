@@ -1,7 +1,7 @@
 import json
 
-from indexing import LocalJSONIndexingPipelineWrapper
-from pipeline import CommonPipelineWrapper
+from src.indexing import LocalJSONIndexingPipelineWrapper
+from src.pipeline import CommonPipelineWrapper
 from haystack_integrations.components.evaluators.ragas import RagasEvaluator
 
 from rag import RagPipelineWrapper

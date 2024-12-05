@@ -30,7 +30,7 @@ ENV HAYSTACK_TELEMETRY_ENABLED="False"
 
 # Setup the directory for the documents to be indexed
 RUN mkdir docs
-#RUN docling --to json --output docs --verbose https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/7/pdf/system_administrators_guide/Red_Hat_Enterprise_Linux-7-System_Administrators_Guide-en-US.pdf
+#RUN docling --to json --output docs --verbose https://docs.redhat.com/en-us/documentation/red_hat_enterprise_linux/7/pdf/developer_guide/Red_Hat_Enterprise_Linux-7-Developer_Guide-en-US.pdf
 
 # Setup Transformers cache
 RUN mkdir cache

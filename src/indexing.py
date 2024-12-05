@@ -5,7 +5,7 @@ from haystack.components.converters import HTMLToDocument, JSONConverter
 from haystack.components.preprocessors import DocumentSplitter, DocumentCleaner
 from haystack.components.writers import DocumentWriter
 
-from pipeline import CommonPipelineWrapper
+from src.pipeline import CommonPipelineWrapper
 
 
 class IndexingPipelineWrapper(CommonPipelineWrapper):
