@@ -1,5 +1,6 @@
 import os
 
+from haystack.components.embedders import SentenceTransformersDocumentEmbedder
 from haystack.components.fetchers import LinkContentFetcher
 from haystack.components.converters import HTMLToDocument, JSONConverter
 from haystack.components.preprocessors import DocumentSplitter, DocumentCleaner
@@ -29,6 +30,10 @@ class IndexingPipelineWrapper(CommonPipelineWrapper):
             raise ValueError(f"Unsupported chunking method: {splitter_type}")
 
         self._add_component("splitter", splitter)
+
+    def _add_embedder(self):
+        embedder = SentenceTransformersDocumentEmbedder(model=self._settings["embedding_model"])
+        self._add_component("embedder", embedder)
 
     def _add_writer(self):
         document_store = self._init_document_store()

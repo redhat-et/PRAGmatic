@@ -1,4 +1,5 @@
 from haystack.components.builders import PromptBuilder, AnswerBuilder
+from haystack.components.embedders import SentenceTransformersTextEmbedder
 from haystack.components.generators import OpenAIGenerator
 from haystack.components.joiners import DocumentJoiner
 from haystack.components.rankers import TransformersSimilarityRanker
@@ -35,6 +36,10 @@ class RagPipelineWrapper(CommonPipelineWrapper):
 
         self._evaluation_mode = evaluation_mode
         self._document_endpoint_name = None
+
+    def _add_embedder(self, query):
+        embedder = SentenceTransformersTextEmbedder(model=self._settings["embedding_model"])
+        self._add_component("embedder", embedder, component_args={"text": query})
 
     def __init_sparse_retriever(self):
         vector_db_type = self._settings["vector_db_type"]

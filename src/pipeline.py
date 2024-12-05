@@ -1,7 +1,6 @@
 from abc import ABC
 
 from haystack import Pipeline
-from haystack.components.embedders import SentenceTransformersTextEmbedder
 # from haystack_integrations.document_stores.elasticsearch import ElasticsearchDocumentStore
 from milvus_haystack import MilvusDocumentStore
 
@@ -56,11 +55,6 @@ class CommonPipelineWrapper(PipelineWrapper, ABC):
     def __init__(self, settings):
         super().__init__()
         self._settings = settings
-
-    def _add_embedder(self, query=None):
-        embedder = SentenceTransformersTextEmbedder(model=self._settings["embedding_model"])
-        args = None if query is None else {"text": query}
-        self._add_component("embedder", embedder, component_args=args)
 
     def _init_document_store(self):
         vector_db_type = self._settings["vector_db_type"]
