@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Install the required Python packages
-RUN pip install haystack-ai trafilatura lxml_html_clean pymilvus milvus-haystack transformers[torch,sentencepiece] sentence-transformers docling
+RUN pip install haystack-ai trafilatura lxml_html_clean pymilvus milvus-haystack transformers[torch,sentencepiece] sentence-transformers docling ragas ragas-haystack
 
 # Clone the Haystack application source code from the Github repository
 RUN git clone https://github.com/redhat-et/RHELAI-RHOAI-RAG.git /app
