@@ -1,3 +1,5 @@
+import warnings; warnings.filterwarnings("ignore", category=DeprecationWarning); warnings.filterwarnings("ignore", category=FutureWarning)
+
 import os
 from pathlib import Path
 
@@ -39,7 +41,7 @@ def main():
                                embedding_model="sentence-transformers/all-MiniLM-L12-v2",
                                vllm_base_url="http://vllm-service:8000/v1",
                                top_k=5)
-    print(result)
+    print(f"\n\n\n{result}")
 
 
 if __name__ == '__main__':
