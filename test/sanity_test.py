@@ -5,6 +5,10 @@ from docling.document_converter import DocumentConverter
 
 from paragon import index_path_for_rag, execute_rag_query
 
+import logging
+logging.disable(logging.WARNING)
+
+
 SOURCE_PDF_URLS = [
     "https://docs.redhat.com/en/documentation/red_hat_build_of_microshift/4.12/pdf/cli_tools/Red_Hat_build_of_MicroShift-4.12-CLI_tools-en-US.pdf",
     "https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/2.15/pdf/introduction_to_red_hat_openshift_ai/Red_Hat_OpenShift_AI_Self-Managed-2.15-Introduction_to_Red_Hat_OpenShift_AI-en-US.pdf",
