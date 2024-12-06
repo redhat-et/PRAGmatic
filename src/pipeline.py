@@ -33,13 +33,13 @@ class PipelineWrapper(object):
         if not should_connect:
             return
 
-        actual_from_connect_point = component_from_connect_point if component_from_connect_point is not None else component_name
+        actual_from_connect_point = component_from_connect_point if component_from_connect_point is not None else self.__last_connect_point
         actual_to_connect_point = component_to_connect_point if component_to_connect_point is not None else component_name
 
         if self.__last_connect_point is not None:
             # this is not the first pipeline component - a link has to be created
-            self._pipeline.connect(self.__last_connect_point, actual_to_connect_point)
-        self.__last_connect_point = actual_from_connect_point
+            self._pipeline.connect(actual_from_connect_point, actual_to_connect_point)
+        self.__last_connect_point = component_name
 
     def _set_last_connect_point(self, connect_point):
         self.__last_connect_point = connect_point
