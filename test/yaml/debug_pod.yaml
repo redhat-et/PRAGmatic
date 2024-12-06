@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: debug-pod
+  namespace: rag-poc
+spec:
+  containers:
+  - name: debug-container
+    image: image-registry.openshift-image-registry.svc:5000/rag-poc/rag-framework-image-stream
+    command: ["sleep", "7200"]
+  restartPolicy: Never

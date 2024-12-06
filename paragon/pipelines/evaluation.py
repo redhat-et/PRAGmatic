@@ -1,10 +1,10 @@
 import json
 
-from src.indexing import LocalFileIndexingPipelineWrapper
-from src.pipeline import CommonPipelineWrapper
+from paragon.pipelines.indexing import LocalFileIndexingPipelineWrapper
+from paragon.pipelines.pipeline import CommonPipelineWrapper
 from haystack_integrations.components.evaluators.ragas import RagasEvaluator
 
-from src.rag import RagPipelineWrapper
+from paragon.pipelines.rag import RagPipelineWrapper
 
 
 class RagasEvaluationPipelineWrapper(CommonPipelineWrapper):

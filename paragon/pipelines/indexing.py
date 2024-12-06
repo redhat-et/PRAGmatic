@@ -6,7 +6,7 @@ from haystack.components.converters import HTMLToDocument, TextFileToDocument
 from haystack.components.preprocessors import DocumentSplitter, DocumentCleaner
 from haystack.components.writers import DocumentWriter
 
-from src.pipeline import CommonPipelineWrapper
+from paragon.pipelines.pipeline import CommonPipelineWrapper
 
 
 class IndexingPipelineWrapper(CommonPipelineWrapper):

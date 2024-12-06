@@ -19,9 +19,9 @@ DEFAULT_SETTINGS = {
     # chunking options
     "chunking_method": "simple",
     "split_by": "word",
-    "split_length": 1000,
-    "split_overlap": 50,
-    "split_threshold": 100,
+    "split_length": 200,
+    "split_overlap": 20,
+    "split_threshold": 20,
 
     # advanced RAG options
     "top_k": 1,

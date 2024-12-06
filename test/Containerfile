@@ -16,8 +16,8 @@ RUN apt-get update && apt-get install -y \
 # Install the required Python packages
 RUN pip install haystack-ai trafilatura lxml_html_clean pymilvus milvus-haystack transformers[torch,sentencepiece] sentence-transformers docling ragas ragas-haystack
 
-# Clone the Haystack application source code from the Github repository
-RUN git clone https://github.com/redhat-et/RHELAI-RHOAI-RAG.git /app
+# Clone the application source code from the Github repository
+RUN git clone https://github.com/redhat-et/PaRAGon.git /app
 
 # Set the working directory in the container
 WORKDIR /app
@@ -30,7 +30,7 @@ ENV HAYSTACK_TELEMETRY_ENABLED="False"
 
 # Setup the directory for the documents to be indexed
 RUN mkdir docs
-#RUN docling --to json --output docs --verbose https://docs.redhat.com/en-us/documentation/red_hat_enterprise_linux/7/pdf/developer_guide/Red_Hat_Enterprise_Linux-7-Developer_Guide-en-US.pdf
+#RUN docling --to json --output docs --verbose https://arxiv.org/pdf/2408.09869
 
 # Setup Transformers cache
 RUN mkdir cache

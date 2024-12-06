@@ -8,7 +8,7 @@ from haystack.utils import Secret
 #    ElasticsearchBM25Retriever
 from milvus_haystack import MilvusEmbeddingRetriever
 
-from src.pipeline import CommonPipelineWrapper
+from paragon.pipelines.pipeline import CommonPipelineWrapper
 
 BASE_RAG_PROMPT = """You are an assistant for question-answering tasks. 
 
