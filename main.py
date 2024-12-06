@@ -42,7 +42,7 @@ def main():
         if '=' in override:
             key, value = override.split('=', 1)
             if key in DEFAULT_SETTINGS:
-                prev_value = custom_settings[key]
+                prev_value = DEFAULT_SETTINGS[key]
                 if type(prev_value) == int:
                     custom_settings[key] = int(value)
                 elif type(prev_value) == float:
