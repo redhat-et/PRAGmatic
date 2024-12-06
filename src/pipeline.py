@@ -26,6 +26,7 @@ class PipelineWrapper(object):
 
     def _add_component(self, component_name, component_obj, component_args=None, should_connect=True,
                        component_from_connect_point=None, component_to_connect_point=None):
+        print(f"Adding component {component_name} with the following args: {component_args}")
         self._pipeline.add_component(component_name, component_obj)
         if component_args is not None:
             self._args[component_name] = component_args
@@ -38,6 +39,7 @@ class PipelineWrapper(object):
 
         if self.__last_connect_point is not None:
             # this is not the first pipeline component - a link has to be created
+            print(f"Adding pipeline connection: {actual_from_connect_point} -> {actual_to_connect_point}")
             self._pipeline.connect(actual_from_connect_point, actual_to_connect_point)
         self.__last_connect_point = component_name
 
@@ -45,6 +47,7 @@ class PipelineWrapper(object):
         self.__last_connect_point = connect_point
 
     def run(self):
+        print(f"Executing the pipeline with the following arguments:\n{self._args}")
         return self._pipeline.run(self._args)
 
     def build_pipeline(self):
