@@ -42,7 +42,13 @@ def main():
         if '=' in override:
             key, value = override.split('=', 1)
             if key in DEFAULT_SETTINGS:
-                custom_settings[key] = value
+                prev_value = custom_settings[key]
+                if type(prev_value) == int:
+                    custom_settings[key] = int(value)
+                elif type(prev_value) == float:
+                    custom_settings[key] = float(value)
+                else:
+                    custom_settings[key] = value
             else:
                 print(f"Warning: '{key}' is not a valid setting key. Ignoring it.")
         else:
