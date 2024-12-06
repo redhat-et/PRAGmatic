@@ -42,7 +42,7 @@ class RagPipelineWrapper(CommonPipelineWrapper):
 
     def __init_sparse_retriever(self):
         vector_db_type = self._settings["vector_db_type"]
-        document_store = self._init_document_store()
+        document_store = self._init_document_store(retrieval_mode=True)
         #if vector_db_type.lower() == "elasticsearch":
         #    return ElasticsearchBM25Retriever(document_store=document_store, top_k=self._settings["elasticsearch_top_k"])
 
@@ -50,7 +50,7 @@ class RagPipelineWrapper(CommonPipelineWrapper):
 
     def __init_dense_retriever(self):
         vector_db_type = self._settings["vector_db_type"]
-        document_store = self._init_document_store()
+        document_store = self._init_document_store(retrieval_mode=True)
         if vector_db_type.lower() == "milvus":
             return MilvusEmbeddingRetriever(document_store=document_store, top_k=self._settings["top_k"])
         #if vector_db_type.lower() == "elasticsearch":

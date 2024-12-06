@@ -36,7 +36,7 @@ class IndexingPipelineWrapper(CommonPipelineWrapper):
         self._add_component("embedder", embedder)
 
     def _add_writer(self):
-        document_store = self._init_document_store()
+        document_store = self._init_document_store(retrieval_mode=False)
         writer = DocumentWriter(document_store)
         self._add_component("writer", writer)
 
