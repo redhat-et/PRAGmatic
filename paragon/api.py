@@ -1,4 +1,3 @@
-from paragon.pipelines.evaluation import Evaluator
 from paragon.pipelines.indexing import LocalFileIndexingPipelineWrapper
 from paragon.pipelines.rag import RagPipelineWrapper
 from paragon.pipelines.utils import produce_custom_settings
@@ -17,6 +16,8 @@ def execute_rag_query(query, **kwargs):
     return pipeline.run()
 
 def evaluate_rag_pipeline(**kwargs):
+    from paragon.pipelines.evaluation import Evaluator
+
     settings = produce_custom_settings(kwargs)
     evaluator = Evaluator(settings)
     return evaluator.evaluate_rag_pipeline()
