@@ -1,4 +1,4 @@
-from haystack_integrations.components.evaluators.ragas import RagasMetric
+# from haystack_integrations.components.evaluators.ragas import RagasMetric
 
 DEFAULT_SETTINGS = {
     # basic settings
@@ -32,14 +32,14 @@ DEFAULT_SETTINGS = {
     "eval_documents_path": "./docs",
     "eval_questions_answers_path": "./qa.txt",
     "eval_ragas_metrics": {
-        RagasMetric.FAITHFULNESS: {
-            "params": None,
-            "required_data": ['questions', 'contexts', 'responses'],
-        },
-        RagasMetric.ANSWER_CORRECTNESS: {
-            "params": {"weights": [0.5, 0.2]},
-            "required_data": ['questions', 'ground_truths', 'responses'],
-        },
+        #RagasMetric.FAITHFULNESS: {
+        #    "params": None,
+        #    "required_data": ['questions', 'contexts', 'responses'],
+        #},
+        #RagasMetric.ANSWER_CORRECTNESS: {
+        #    "params": {"weights": [0.5, 0.2]},
+        #    "required_data": ['questions', 'ground_truths', 'responses'],
+        #},
     },
 
 

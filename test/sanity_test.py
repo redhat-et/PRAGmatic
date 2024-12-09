@@ -19,6 +19,9 @@ SOURCE_PDF_URLS = [
 DOCS_LOCAL_DIR_NAME = "docs"
 
 def docling_convert(docs):
+    if len(os.listdir(DOCS_LOCAL_DIR_NAME)) > 0:
+        # documents already converted - nothing to be done
+        return
     converter = DocumentConverter()
     for doc_url in docs:
         result = converter.convert(doc_url)
