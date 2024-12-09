@@ -22,4 +22,7 @@ def evaluate_rag_pipeline(**kwargs):
     return evaluator.evaluate_rag_pipeline()
 
 
-__all__ = ["index_path_for_rag", "execute_rag_query", "evaluate_rag_pipeline"]
+__all__ = ["index_path_for_rag",
+           "execute_rag_query",
+           # "evaluate_rag_pipeline"
+           ]
