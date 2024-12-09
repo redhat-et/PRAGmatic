@@ -1,4 +1,8 @@
-import warnings; warnings.filterwarnings("ignore", category=DeprecationWarning); warnings.filterwarnings("ignore", category=FutureWarning)
+import warnings;
+
+from docling.datamodel.base_models import InputFormat
+
+warnings.filterwarnings("ignore", category=DeprecationWarning); warnings.filterwarnings("ignore", category=FutureWarning)
 
 import os
 from pathlib import Path
@@ -22,7 +26,7 @@ def docling_convert(docs):
     if len(os.listdir(DOCS_LOCAL_DIR_NAME)) > 0:
         # documents already converted - nothing to be done
         return
-    converter = DocumentConverter()
+    converter = DocumentConverter(allowed_formats=[InputFormat.PDF])
     for doc_url in docs:
         result = converter.convert(doc_url)
         output_path = os.path.join(DOCS_LOCAL_DIR_NAME, doc_url.split('/')[-1] + ".json")
