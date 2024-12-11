@@ -27,7 +27,7 @@ class IndexingPipelineWrapper(CommonPipelineWrapper):
                                         split_overlap=self._settings["split_overlap"],
                                         split_threshold=self._settings["split_threshold"])
         elif splitter_type == "docling":
-            splitter = DoclingDocumentSplitter(embedding_model_id=self._settings["docling_embedding_model_id"],
+            splitter = DoclingDocumentSplitter(embedding_model_id=self._settings["docling_embedding_model"],
                                                content_format=self._settings["document_conversion_format"])
         else:
             raise ValueError(f"Unsupported chunking method: {splitter_type}")

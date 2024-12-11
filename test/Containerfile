@@ -15,6 +15,7 @@ RUN apt-get update && apt-get install -y \
 
 # Install the required Python packages
 RUN pip install haystack-ai trafilatura lxml_html_clean pymilvus milvus-haystack transformers[torch,sentencepiece] sentence-transformers docling ragas ragas-haystack
+RUN pip install --upgrade docling
 
 # Clone the application source code from the Github repository
 RUN git clone https://github.com/redhat-et/PaRAGon.git /app
