@@ -6,6 +6,8 @@ from haystack.components.converters import HTMLToDocument, TextFileToDocument
 from haystack.components.preprocessors import DocumentSplitter, DocumentCleaner
 from haystack.components.writers import DocumentWriter
 
+from paragon.haystack.docling_converter import DoclingDocumentConverter
+from paragon.haystack.docling_splitter import DoclingDocumentSplitter
 from paragon.pipelines.pipeline import CommonPipelineWrapper
 
 
@@ -25,14 +27,15 @@ class IndexingPipelineWrapper(CommonPipelineWrapper):
                                         split_overlap=self._settings["split_overlap"],
                                         split_threshold=self._settings["split_threshold"])
         elif splitter_type == "docling":
-            splitter = None  # TODO: implement docling-specific splitting
+            splitter = DoclingDocumentSplitter(embedding_model_id=self._settings["docling_embedding_model_id"],
+                                               content_format=self._settings["document_conversion_format"])
         else:
             raise ValueError(f"Unsupported chunking method: {splitter_type}")
 
         self._add_component("splitter", splitter)
 
     def _add_embedder(self):
-        embedder = SentenceTransformersDocumentEmbedder(model=self._settings["embedding_model"])
+        embedder = SentenceTransformersDocumentEmbedder(model=self._settings["retrieval_embedding_model"])
         self._add_component("embedder", embedder)
 
     def _add_writer(self):
@@ -83,5 +86,11 @@ class LocalFileIndexingPipelineWrapper(IndexingPipelineWrapper):
         return
 
     def _add_converter(self):
-        converter = TextFileToDocument()
+        if self._settings["document_input_format"] == self._settings["document_conversion_format"]:
+            # documents are already provided in the conversion format and there is no need to apply docling on them
+            converter = TextFileToDocument()
+        else:
+            # we have to used docling to convert the documents to the specified format
+            converter = DoclingDocumentConverter(output_format=self._settings["document_conversion_format"],
+                                                 temp_conversion_file_path=self._settings["temp_conversion_file_path"])
         self._add_component("converter", converter, component_args={"sources": self._json_files})

@@ -37,7 +37,7 @@ class RagPipelineWrapper(CommonPipelineWrapper):
         self._evaluation_mode = evaluation_mode
 
     def _add_embedder(self, query):
-        embedder = SentenceTransformersTextEmbedder(model=self._settings["embedding_model"])
+        embedder = SentenceTransformersTextEmbedder(model=self._settings["retrieval_embedding_model"])
         self._add_component("embedder", embedder, component_args={"text": query})
 
     def __init_sparse_retriever(self):
@@ -104,7 +104,7 @@ class RagPipelineWrapper(CommonPipelineWrapper):
         llm = OpenAIGenerator(
             api_key=Secret.from_token("VLLM-PLACEHOLDER-API-KEY"),  # for compatibility with the OpenAI API
             model=self._settings["llm"],
-            api_base_url=self._settings["vllm_base_url"],
+            api_base_url=self._settings["llm_base_url"],
             generation_kwargs={"max_tokens": 512}
         )
         self._add_component("llm", llm)

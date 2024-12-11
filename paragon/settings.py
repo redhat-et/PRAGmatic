@@ -4,7 +4,13 @@ DEFAULT_SETTINGS = {
     # basic settings
     "vector_db_type": "milvus",
     "retriever_type": "dense",
-    "embedding_model": "sentence-transformers/all-MiniLM-L12-v2",
+    "retrieval_embedding_model": "sentence-transformers/all-MiniLM-L12-v2",
+
+    # document conversion-related settings
+    "document_input_format": "json",
+    "document_conversion_format": "json",
+    "docling_embedding_model": "sentence-transformers/all-MiniLM-L12-v2",
+    "temp_conversion_file_path": "./tmp.json",
 
     # Milvus-related settings
     "milvus_deployment_type": "lite",
@@ -14,10 +20,10 @@ DEFAULT_SETTINGS = {
 
     # LLM-related settings
     "llm": "mistralai/Mistral-7B-Instruct-v0.2",
-    "vllm_base_url": "http://vllm-service:8000/v1",
+    "llm_base_url": "http://vllm-service:8000/v1",
 
     # chunking options
-    "chunking_method": "simple",
+    "chunking_method": "docling",
     "split_by": "word",
     "split_length": 200,
     "split_overlap": 20,
