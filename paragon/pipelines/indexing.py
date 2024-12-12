@@ -79,7 +79,7 @@ class LocalFileIndexingPipelineWrapper(IndexingPipelineWrapper):
         self._json_files = []
         for file in os.listdir(doc_path):
             file_path = os.path.join(doc_path, file)
-            if os.path.isfile(file_path) and file.endswith(".json"):
+            if os.path.isfile(file_path) and file.endswith(f".{self._settings['document_input_format']}"):
                 self._json_files.append(os.path.abspath(file_path))
 
     def _add_fetcher(self):
