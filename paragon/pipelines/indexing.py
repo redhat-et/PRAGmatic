@@ -28,7 +28,8 @@ class IndexingPipelineWrapper(CommonPipelineWrapper):
                                         split_threshold=self._settings["split_threshold"])
         elif splitter_type == "docling":
             splitter = DoclingDocumentSplitter(embedding_model_id=self._settings["docling_embedding_model"],
-                                               content_format=self._settings["document_conversion_format"])
+                                               content_format=self._settings["document_conversion_format"],
+                                               max_tokens=self._settings["max_tokens_per_chunk"])
         else:
             raise ValueError(f"Unsupported chunking method: {splitter_type}")
 
