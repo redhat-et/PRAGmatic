@@ -31,7 +31,7 @@ class DoclingDocumentConverter:
                 # as of now, docling does not support JSON (de-)serialization to/from string,
                 # hence we have to store an intermediate file
                 docling_document.save_to_json(Path(self.temp_conversion_file_path))
-                with open(self.temp_conversion_file_path, "w") as f:
+                with open(self.temp_conversion_file_path, "r") as f:
                     new_document = Document(content=f.read())
 
             documents.append(new_document)
