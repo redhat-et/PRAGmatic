@@ -29,7 +29,7 @@ class DoclingDocumentConverter:
 
         print(f"Received sources for conversion: {sources}")
         for source in sources:
-            docling_document = converter.convert(source)
+            docling_document = converter.convert(source).document
             print(f"Converted to docling from source {source}")
 
             if self.output_format == 'json':
