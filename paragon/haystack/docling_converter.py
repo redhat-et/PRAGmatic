@@ -18,7 +18,6 @@ class DoclingDocumentConverter:
         self.output_format = output_format
         self.temp_conversion_file_path = temp_conversion_file_path
 
-        print(f"Created docling document converter with output format {output_format} and temp file path {temp_conversion_file_path}")
 
     @component.output_types(documents=List[Document])
     def run(self, sources: List[Union[str, Path, ByteStream]], meta: Optional[Union[Dict[str, Any], List[Dict[str, Any]]]] = None):
@@ -27,10 +26,8 @@ class DoclingDocumentConverter:
         documents = []
         converter = DocumentConverter()
 
-        print(f"Received sources for conversion: {sources}")
         for source in sources:
             docling_document = converter.convert(source).document
-            print(f"Converted to docling from source {source}")
 
             if self.output_format == 'json':
                 # as of now, docling does not support JSON (de-)serialization to/from string,
@@ -41,6 +38,5 @@ class DoclingDocumentConverter:
                 os.remove(self.temp_conversion_file_path)
 
             documents.append(new_document)
-            print(f"Indexed a new document {new_document}")
 
         return {"documents": documents}

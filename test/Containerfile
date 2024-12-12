@@ -35,7 +35,6 @@ RUN mkdir docs
 
 # Setup Transformers cache
 RUN mkdir cache
-ENV TRANSFORMERS_CACHE="/app/cache"
 ENV HF_HOME="/app/cache"
 
 # Make sure no permission issues arise

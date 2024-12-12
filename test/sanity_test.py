@@ -17,7 +17,7 @@ SOURCE_PDF_URLS = [
 DOCS_LOCAL_DIR_NAME = "docs"
 
 # True to convert PDFs to JSONs as a part of Paragon's indexing pipeline and False to do it externally
-TEST_PDF_TO_JSON_CONVERSION = True
+TEST_PDF_TO_JSON_CONVERSION = False
 
 def docling_convert(docs):
     if len(os.listdir(DOCS_LOCAL_DIR_NAME)) > 0:
@@ -51,7 +51,7 @@ def main():
                                milvus_file_path="./milvus.db",
                                embedding_model="sentence-transformers/all-MiniLM-L12-v2",
                                vllm_base_url="http://vllm-service:8000/v1",
-                               top_k=5)
+                               top_k=3)
     print(f"\n\n\n{result}")
 
 
