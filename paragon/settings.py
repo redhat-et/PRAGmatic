@@ -24,7 +24,7 @@ DEFAULT_SETTINGS = {
 
     # chunking options
     "chunking_method": "docling",
-    "max_tokens_per_chunk": 512,
+    "max_tokens_per_chunk": 128,
     "split_by": "word",
     "split_length": 200,
     "split_overlap": 20,

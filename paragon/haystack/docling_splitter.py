@@ -6,8 +6,6 @@ from haystack import Document, component
 from haystack.core.serialization import default_from_dict, default_to_dict
 
 from docling.chunking import HybridChunker
-from transformers import AutoTokenizer
-
 
 @component
 class DoclingDocumentSplitter:
@@ -15,9 +13,7 @@ class DoclingDocumentSplitter:
     SUPPORTED_CONTENT_FORMATS = ['json']
 
     def __init__(self, embedding_model_id=None, content_format=None, max_tokens=None):
-        tokenizer = AutoTokenizer.from_pretrained(embedding_model_id)
-
-        self.__chunker = HybridChunker(tokenizer=tokenizer)
+        self.__chunker = HybridChunker(tokenizer=embedding_model_id, max_tokens=max_tokens)
         self.__embedding_model_id = embedding_model_id
 
         if content_format not in self.SUPPORTED_CONTENT_FORMATS:
