@@ -27,7 +27,7 @@ The default implementation of the RAG framework is designed for optimal performa
 
 - `Python 3.9+`
 
-#### Installation
+### Installation
 
 Clone the repository:
 
@@ -42,7 +42,7 @@ Install dependencies:
 pip install -r requirements.txt
 ```
 
-#### Running the RAG pipeline locally
+### Running the RAG pipeline locally
 
 We have a simple demo script `test/sanity_test.py` that you can run to test the RAG pipeline.
 
