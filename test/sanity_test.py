@@ -56,7 +56,7 @@ def main():
     result1 = execute_rag_query("How to install OpenShift CLI on macOS?",
                                milvus_file_path="./milvus.db",
                                embedding_model="sentence-transformers/all-MiniLM-L12-v2",
-                               vllm_base_url="http://vllm-service:8000/v1",
+                               llm_base_url="http://vllm-service:8000/v1",
                                top_k=3)
     print("Response generated:")
     print(f"\n{result1}")
@@ -65,7 +65,7 @@ def main():
     result2 = execute_rag_query("What are the two deployment options in OpenShift AI?",
                                milvus_file_path="./milvus.db",
                                embedding_model="sentence-transformers/all-MiniLM-L12-v2",
-                               vllm_base_url="http://vllm-service:8000/v1",
+                               llm_base_url="http://vllm-service:8000/v1",
                                top_k=3)
     print("Response generated:")
     print(f"\n{result2}")
