@@ -23,7 +23,7 @@ The default implementation of the RAG framework is designed for optimal performa
 
 ## Getting Started
 
-### Prerequisites
+### Pre-Requisites
 
 - `Python 3.9+`
 
