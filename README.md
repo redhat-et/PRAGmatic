@@ -32,8 +32,8 @@ The default implementation of the RAG framework is designed for optimal performa
 Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/rag-framework.git
-cd rag-framework
+git clone git@github.com:redhat-et/PaRAGon.git
+cd PaRAGon
 ```
 
 Install dependencies:
