@@ -69,6 +69,15 @@ def main():
                                top_k=3)
     print("Response generated:")
     print(f"\n{result2}")
+    print("\n")
+    print("Question: What is OpenShift AI?")
+    result3 = execute_rag_query("What is OpenShift AI?",
+                               milvus_file_path="./milvus.db",
+                               embedding_model="sentence-transformers/all-MiniLM-L12-v2",
+                               llm_base_url="http://vllm-service:8000/v1",
+                               top_k=3)
+    print("Response generated:")
+    print(f"\n{result3}")
 
 
 if __name__ == '__main__':
