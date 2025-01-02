@@ -7,6 +7,7 @@ import requests
 from docling.document_converter import DocumentConverter
 
 from paragon import index_path_for_rag, execute_rag_query
+from paragon.settings import DEFAULT_SETTINGS
 
 SOURCE_PDF_URLS = [
     "https://docs.redhat.com/en/documentation/red_hat_build_of_microshift/4.12/pdf/cli_tools/Red_Hat_build_of_MicroShift-4.12-CLI_tools-en-US.pdf",
@@ -45,36 +46,36 @@ def main():
     # index the JSONs under a Milvus Lite instance
     print("Step 2: Embedding the JSONs and indexing them into Milvus vector database \n")
     index_path_for_rag(DOCS_LOCAL_DIR_NAME,
-                       milvus_deployment_type="lite",
-                       milvus_file_path="./milvus.db",
-                       embedding_model="sentence-transformers/all-MiniLM-L12-v2",
+                       milvus_deployment_type=DEFAULT_SETTINGS['milvus_deployment_type'],
+                       milvus_file_path=DEFAULT_SETTINGS['milvus_file_path'],
+                       embedding_model=DEFAULT_SETTINGS['retrieval_embedding_model'],
                        document_input_format='pdf' if TEST_PDF_TO_JSON_CONVERSION else 'json')
 
     # execute a simple RAG query
     print("Step 3: Executing simple RAG queries \n")
     print("Question: How to install OpenShift CLI on macOS?")
     result1 = execute_rag_query("How to install OpenShift CLI on macOS?",
-                               milvus_file_path="./milvus.db",
-                               embedding_model="sentence-transformers/all-MiniLM-L12-v2",
-                               llm_base_url="http://vllm-service:8000/v1",
+                               milvus_file_path=DEFAULT_SETTINGS['milvus_file_path'],
+                               embedding_model=DEFAULT_SETTINGS['retrieval_embedding_model'],
+                               llm_base_url=DEFAULT_SETTINGS['llm_base_url'],
                                top_k=3)
     print("Response generated:")
     print(f"\n{result1}")
     print("\n")
     print("Question: What are the two deployment options in OpenShift AI?")
     result2 = execute_rag_query("What are the two deployment options in OpenShift AI?",
-                               milvus_file_path="./milvus.db",
-                               embedding_model="sentence-transformers/all-MiniLM-L12-v2",
-                               llm_base_url="http://vllm-service:8000/v1",
+                               milvus_file_path=DEFAULT_SETTINGS['milvus_file_path'],
+                               embedding_model=DEFAULT_SETTINGS['retrieval_embedding_model'],
+                               llm_base_url=DEFAULT_SETTINGS['llm_base_url'],
                                top_k=3)
     print("Response generated:")
     print(f"\n{result2}")
     print("\n")
     print("Question: What is OpenShift AI?")
     result3 = execute_rag_query("What is OpenShift AI?",
-                               milvus_file_path="./milvus.db",
-                               embedding_model="sentence-transformers/all-MiniLM-L12-v2",
-                               llm_base_url="http://vllm-service:8000/v1",
+                               milvus_file_path=DEFAULT_SETTINGS['milvus_file_path'],
+                               embedding_model=DEFAULT_SETTINGS['retrieval_embedding_model'],
+                               llm_base_url=DEFAULT_SETTINGS['llm_base_url'],
                                top_k=3)
     print("Response generated:")
     print(f"\n{result3}")
