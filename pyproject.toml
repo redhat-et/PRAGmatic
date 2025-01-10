@@ -1,0 +1,10 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "PRAGmatic"
+version = "0.1.0"
+description = "An experimental RAG framework"
+authors = [{ name = "Ilya Kolchinsky", email = "ikolchin@redhat.com" },
+           { name = "Hema Veeradhi", email = "hveeradh@redhat.com" }]
