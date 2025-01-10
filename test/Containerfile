@@ -18,7 +18,7 @@ RUN pip install haystack-ai trafilatura lxml_html_clean pymilvus milvus-haystack
 RUN pip install --upgrade docling
 
 # Clone the application source code from the Github repository
-RUN git clone https://github.com/redhat-et/PaRAGon.git /app
+RUN git clone https://github.com/redhat-et/PRAGmatic.git /app
 
 # Set the working directory in the container
 WORKDIR /app
