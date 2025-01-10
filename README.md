@@ -1,4 +1,4 @@
-# PaRAGon
+# PRAGmatic
 
 A **customizable, pluggable, and scalable Retrieval-Augmented Generation (RAG) framework** designed to streamline the process of building AI-powered applications that require knowledge-grounded text generation. This framework provides end-to-end components for retrieval, processing, and generation, while allowing users to plug in custom modules at every stage.
 
@@ -32,8 +32,8 @@ The default implementation of the RAG framework is designed for optimal performa
 Clone the repository:
 
 ```bash
-git clone git@github.com:redhat-et/PaRAGon.git
-cd PaRAGon
+git clone git@github.com:redhat-et/PRAGmatic.git
+cd PRAGmatic
 ```
 
 Install dependencies:
@@ -46,13 +46,13 @@ pip install -r requirements.txt
 
 We have a simple demo script `test/sanity_test.py` that you can run to test the RAG pipeline.
 
-Before running the script, ensure that you update the following vars in the `paragon/settings.py` file:
+Before running the script, ensure that you update the following vars in the `pragmatic/settings.py` file:
 
 - `milvus_server_url` - You can replace this with your hosted Milvus vector DB endpoint else use the default which will be an in-memory local deployment of Milvus Lite
 - `llm_base_url` - The LLM serving endpoint you would like to interact with. It can either be a locally running LLM or a hosted LLM
 -  `llm` - The corresponding model name of the LLM being served at the above specified URL
 
-Optionally, you can change many other settings that are mentioned in the `paragon/settings.py` script such as `retrieval_embedding_model` for your choice of embedding model, `top_k` the number of search results you would like to be returned etc to suit your needs.
+Optionally, you can change many other settings that are mentioned in the `pragmatic/settings.py` script such as `retrieval_embedding_model` for your choice of embedding model, `top_k` the number of search results you would like to be returned etc to suit your needs.
 
 Once all the settings have been made, you can run the following:
 

@@ -1,4 +1,4 @@
-from paragon.settings import DEFAULT_SETTINGS
+from pragmatic.settings import DEFAULT_SETTINGS
 
 
 def produce_custom_settings(settings_overrides=None):

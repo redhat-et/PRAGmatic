@@ -6,9 +6,9 @@ from haystack.components.converters import HTMLToDocument, TextFileToDocument
 from haystack.components.preprocessors import DocumentSplitter, DocumentCleaner
 from haystack.components.writers import DocumentWriter
 
-from paragon.haystack.docling_converter import DoclingDocumentConverter
-from paragon.haystack.docling_splitter import DoclingDocumentSplitter
-from paragon.pipelines.pipeline import CommonPipelineWrapper
+from pragmatic.haystack.docling_converter import DoclingDocumentConverter
+from pragmatic.haystack.docling_splitter import DoclingDocumentSplitter
+from pragmatic.pipelines.pipeline import CommonPipelineWrapper
 
 
 class IndexingPipelineWrapper(CommonPipelineWrapper):

@@ -6,7 +6,7 @@ import requests
 
 from docling.document_converter import DocumentConverter
 
-from paragon import index_path_for_rag, execute_rag_query
+from pragmatic import index_path_for_rag, execute_rag_query
 
 SOURCE_PDF_URLS = [
     "https://docs.redhat.com/en/documentation/red_hat_build_of_microshift/4.12/pdf/cli_tools/Red_Hat_build_of_MicroShift-4.12-CLI_tools-en-US.pdf",
@@ -17,6 +17,7 @@ DOCS_LOCAL_DIR_NAME = "docs"
 
 # True to convert PDFs to JSONs as a part of Paragon's indexing pipeline and False to do it externally
 TEST_PDF_TO_JSON_CONVERSION = False
+
 
 def docling_convert(docs):
     if len(os.listdir(DOCS_LOCAL_DIR_NAME)) > 0:
@@ -36,6 +37,7 @@ def docling_convert(docs):
             result = converter.convert(doc_url)
             result.document.save_as_json(Path(base_output_path + ".json"))
     print("Successfully converted the documents and saved as JSON in local directory specified \n")
+
 
 def main():
     # download and convert source PDF documents to JSON format using docling
