@@ -9,6 +9,7 @@ from haystack.components.writers import DocumentWriter
 
 from docling_haystack.converter import DoclingConverter, ExportType
 
+from pragmatic.haystack.docling_splitter import DoclingDocumentSplitter
 from pragmatic.pipelines.pipeline import CommonPipelineWrapper
 
 
@@ -30,8 +31,12 @@ class IndexingPipelineWrapper(CommonPipelineWrapper):
                                         split_overlap=self._settings["split_overlap"],
                                         split_threshold=self._settings["split_threshold"])
         elif splitter_type == "docling":
-            # when docling is used, chunking is handled in the respective converter component
-            return
+            if self._settings["apply_docling"]:
+                # when docling is used, chunking is handled in the respective converter component
+                return
+            splitter = DoclingDocumentSplitter(embedding_model_id=self._settings["docling_tokenizer_model"],
+                                               content_format=self._settings["converted_docling_document_format"],
+                                               max_tokens=self._settings["max_tokens_per_chunk"])
         else:
             raise ValueError(f"Unsupported chunking method: {splitter_type}")
 

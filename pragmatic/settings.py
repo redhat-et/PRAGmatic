@@ -29,10 +29,12 @@ DEFAULT_SETTINGS = {
 
     # other indexing-related settings
     "process_input_recursively": True,
+    # this parameter is a hack to enable docling-based chunking of documents converted via docling externally
+    "converted_docling_document_format": "json",
 
     # LLM-related settings
     "llm": "mistralai/Mistral-7B-Instruct-v0.2",
-    "llm_base_url": "http://vllm-service:8000/v1",
+    "llm_base_url": "http://127.0.0.1:8000/v1",
 
     # advanced RAG options
     "top_k": 1,
