@@ -78,10 +78,22 @@ class LocalFileIndexingPipelineWrapper(IndexingPipelineWrapper):
         super().__init__(settings)
 
         self._json_files = []
-        for file in os.listdir(doc_path):
-            file_path = os.path.join(doc_path, file)
-            if os.path.isfile(file_path) and file.endswith(f".{self._settings['document_input_format']}"):
-                self._json_files.append(os.path.abspath(file_path))
+
+        if self._settings['process_input_recursively']:
+            for root, _, files in os.walk(doc_path):
+                for file in files:
+                    self.__verify_and_add_input_file(root, file)
+        else:
+            for file in os.listdir(doc_path):
+                self.__verify_and_add_input_file(doc_path, file)
+
+    def __verify_and_add_input_file(self, root_path, file_path):
+        if not os.path.isfile(file_path):
+            return False
+        if not file_path.endswith(f".{self._settings['document_input_format']}"):
+            return False
+        self._json_files.append(os.path.abspath(os.path.join(root_path, file_path)))
+        return True
 
     def _add_fetcher(self):
         return

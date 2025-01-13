@@ -18,10 +18,6 @@ DEFAULT_SETTINGS = {
     "milvus_server_url": "http://milvus-service:19530",
     "drop_old_collection": True,
 
-    # LLM-related settings
-    "llm": "mistralai/Mistral-7B-Instruct-v0.2",
-    "llm_base_url": "http://vllm-service:8000/v1",
-
     # chunking options
     "chunking_method": "docling",
     "max_tokens_per_chunk": 512,
@@ -29,6 +25,13 @@ DEFAULT_SETTINGS = {
     "split_length": 200,
     "split_overlap": 20,
     "split_threshold": 20,
+
+    # other indexing-related settings
+    "process_input_recursively": True,
+
+    # LLM-related settings
+    "llm": "mistralai/Mistral-7B-Instruct-v0.2",
+    "llm_base_url": "http://vllm-service:8000/v1",
 
     # advanced RAG options
     "top_k": 1,
