@@ -50,7 +50,7 @@ def main():
                        milvus_deployment_type="lite",
                        milvus_file_path="./milvus.db",
                        embedding_model="sentence-transformers/all-MiniLM-L12-v2",
-                       document_input_format='pdf' if TEST_PDF_TO_JSON_CONVERSION else 'json')
+                       input_document_formats=['pdf'] if TEST_PDF_TO_JSON_CONVERSION else ['json'])
 
     # execute a simple RAG query
     print("Step 3: Executing simple RAG queries \n")

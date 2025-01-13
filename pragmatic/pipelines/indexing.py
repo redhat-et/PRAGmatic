@@ -1,13 +1,14 @@
 import os
 
+from docling.chunking import HybridChunker
 from haystack.components.embedders import SentenceTransformersDocumentEmbedder
 from haystack.components.fetchers import LinkContentFetcher
 from haystack.components.converters import HTMLToDocument, TextFileToDocument
 from haystack.components.preprocessors import DocumentSplitter, DocumentCleaner
 from haystack.components.writers import DocumentWriter
 
-from pragmatic.haystack.docling_converter import DoclingDocumentConverter
-from pragmatic.haystack.docling_splitter import DoclingDocumentSplitter
+from docling_haystack.converter import DoclingConverter, ExportType
+
 from pragmatic.pipelines.pipeline import CommonPipelineWrapper
 
 
@@ -20,16 +21,17 @@ class IndexingPipelineWrapper(CommonPipelineWrapper):
         self._add_component("cleaner", cleaner)
 
     def _add_splitter(self):
-        splitter_type = self._settings["chunking_method"]
+        if not self._settings["chunking_enabled"]:
+            return
+        splitter_type = self._settings["chunking_method"].lower()
         if splitter_type == "simple":
             splitter = DocumentSplitter(split_by=self._settings["split_by"],
                                         split_length=self._settings["split_length"],
                                         split_overlap=self._settings["split_overlap"],
                                         split_threshold=self._settings["split_threshold"])
         elif splitter_type == "docling":
-            splitter = DoclingDocumentSplitter(embedding_model_id=self._settings["docling_embedding_model"],
-                                               content_format=self._settings["document_conversion_format"],
-                                               max_tokens=self._settings["max_tokens_per_chunk"])
+            # when docling is used, chunking is handled in the respective converter component
+            return
         else:
             raise ValueError(f"Unsupported chunking method: {splitter_type}")
 
@@ -77,7 +79,7 @@ class LocalFileIndexingPipelineWrapper(IndexingPipelineWrapper):
     def __init__(self, settings, doc_path):
         super().__init__(settings)
 
-        self._json_files = []
+        self._source_files = []
 
         if self._settings['process_input_recursively']:
             for root, _, files in os.walk(doc_path):
@@ -90,20 +92,24 @@ class LocalFileIndexingPipelineWrapper(IndexingPipelineWrapper):
     def __verify_and_add_input_file(self, root_path, file_path):
         if not os.path.isfile(file_path):
             return False
-        if not file_path.endswith(f".{self._settings['document_input_format']}"):
-            return False
-        self._json_files.append(os.path.abspath(os.path.join(root_path, file_path)))
+        if self._settings['input_document_formats'] is not None and self._settings['input_document_formats'] != '*':
+            file_extension = file_path.split('.')[-1]
+            if file_extension not in self._settings['input_document_formats']:
+                return False
+        self._source_files.append(os.path.abspath(os.path.join(root_path, file_path)))
         return True
 
     def _add_fetcher(self):
         return
 
     def _add_converter(self):
-        if self._settings["document_input_format"] == self._settings["document_conversion_format"]:
-            # documents are already provided in the conversion format and there is no need to apply docling on them
-            converter = TextFileToDocument()
+        if self._settings["apply_docling"]:
+            use_docling_chunker = self._settings["chunking_enabled"] and self._settings["chunking_method"].lower() == 'docling'
+            export_type = ExportType.DOC_CHUNKS if use_docling_chunker else ExportType.MARKDOWN
+            converter = DoclingConverter(export_type=export_type,
+                                         chunker=HybridChunker(tokenizer=self._settings['docling_tokenizer_model']))
+            converter_args = {"paths": self._source_files}
         else:
-            # we have to used docling to convert the documents to the specified format
-            converter = DoclingDocumentConverter(output_format=self._settings["document_conversion_format"],
-                                                 temp_conversion_file_path=self._settings["temp_conversion_file_path"])
-        self._add_component("converter", converter, component_args={"sources": self._json_files})
+            converter = TextFileToDocument()
+            converter_args = {"sources": self._source_files}
+        self._add_component("converter", converter, component_args=converter_args)

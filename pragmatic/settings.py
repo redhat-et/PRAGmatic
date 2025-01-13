@@ -7,10 +7,10 @@ DEFAULT_SETTINGS = {
     "retrieval_embedding_model": "sentence-transformers/all-MiniLM-L12-v2",
 
     # document conversion-related settings
-    "document_input_format": "json",
-    "document_conversion_format": "json",
-    "docling_embedding_model": "sentence-transformers/all-MiniLM-L12-v2",
-    "temp_conversion_file_path": "./tmp.json",
+    "apply_docling": False,
+    "docling_tokenizer_model": "sentence-transformers/all-MiniLM-L12-v2",
+    "input_document_formats": ["json"],
+
 
     # Milvus-related settings
     "milvus_deployment_type": "lite",
@@ -19,6 +19,7 @@ DEFAULT_SETTINGS = {
     "drop_old_collection": True,
 
     # chunking options
+    "chunking_enabled": True,
     "chunking_method": "docling",
     "max_tokens_per_chunk": 512,
     "split_by": "word",
