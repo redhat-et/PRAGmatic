@@ -8,5 +8,7 @@ def produce_custom_settings(settings_overrides=None):
     settings = dict(DEFAULT_SETTINGS)
     if settings_overrides is not None:
         for override_key, override_value in settings_overrides.items():
+            if override_key not in settings:
+                print(f"Warning: undefined parameter {override_key}")
             settings[override_key] = override_value
     return settings

@@ -4,7 +4,7 @@ DEFAULT_SETTINGS = {
     # basic settings
     "vector_db_type": "milvus",
     "retriever_type": "dense",
-    "retrieval_embedding_model": "sentence-transformers/all-MiniLM-L12-v2",
+    "embedding_model": "sentence-transformers/all-MiniLM-L12-v2",
 
     # document conversion-related settings
     "apply_docling": False,
