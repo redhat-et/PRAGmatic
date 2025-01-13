@@ -90,13 +90,14 @@ class LocalFileIndexingPipelineWrapper(IndexingPipelineWrapper):
                 self.__verify_and_add_input_file(doc_path, file)
 
     def __verify_and_add_input_file(self, root_path, file_path):
-        if not os.path.isfile(file_path):
+        absolute_path = os.path.abspath(os.path.join(root_path, file_path))
+        if not os.path.isfile(absolute_path):
             return False
         if self._settings['input_document_formats'] is not None and self._settings['input_document_formats'] != '*':
-            file_extension = file_path.split('.')[-1]
+            file_extension = absolute_path.split('.')[-1]
             if file_extension not in self._settings['input_document_formats']:
                 return False
-        self._source_files.append(os.path.abspath(os.path.join(root_path, file_path)))
+        self._source_files.append(absolute_path)
         return True
 
     def _add_fetcher(self):
