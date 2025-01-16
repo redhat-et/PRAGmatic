@@ -6,7 +6,8 @@ import requests
 
 # addressing the issue where the project structure causes pragmatic to not be on the path
 import sys
-sys.path.append(os.path.dirname(os.getcwd()))
+sys.path.insert(0, os.path.dirname(os.path.abspath(os.getcwd())))
+print(sys.path)
 
 from docling.document_converter import DocumentConverter
 
