@@ -46,17 +46,21 @@ pip install -r requirements.txt
 
 We have a simple demo script `test/sanity_test.py` that you can run to test the RAG pipeline.
 
-Before running the script, ensure that you update the following vars in the `pragmatic/settings.py` file:
+Before running the script, make sure to update the API calls to reflect your setup as well as your preferred settings.
+You can view all configurable parameters under `pragmatic/settings.py`. 
+Each of the parameters can be altered either by directly modifying the default value or by overwriting it in an API call.
+Please refer to the code for examples.
+
+Settings that you might need to override as explained above include, among the rest:
+
 
 - `milvus_server_url` - You can replace this with your hosted Milvus vector DB endpoint else use the default which will be an in-memory local deployment of Milvus Lite
 - `llm_base_url` - The LLM serving endpoint you would like to interact with. It can either be a locally running LLM or a hosted LLM
 -  `llm` - The corresponding model name of the LLM being served at the above specified URL
 
-Optionally, you can change many other settings that are mentioned in the `pragmatic/settings.py` script such as `retrieval_embedding_model` for your choice of embedding model, `top_k` the number of search results you would like to be returned etc to suit your needs.
+Once all the parameters/settings have been defined, you can run the following:
 
-Once all the settings have been made, you can run the following:
-
-```python
+```cmd
 python test/sanity_test.py
 ```
 
