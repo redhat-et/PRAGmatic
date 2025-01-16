@@ -4,6 +4,10 @@ import os
 from pathlib import Path
 import requests
 
+# addressing the issue where the project structure causes pragmatic to not be on the path
+import sys
+sys.path.append(os.path.dirname(os.getcwd()))
+
 from docling.document_converter import DocumentConverter
 
 from pragmatic import index_path_for_rag, execute_rag_query
@@ -13,7 +17,7 @@ SOURCE_PDF_URLS = [
     "https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/2-latest/pdf/introduction_to_red_hat_openshift_ai/Red_Hat_OpenShift_AI_Self-Managed-2-latest-Introduction_to_Red_Hat_OpenShift_AI-en-US.pdf",
     "https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/2-latest/pdf/introduction_to_red_hat_openshift_ai/Red_Hat_OpenShift_AI_Self-Managed-2-latest-Introduction_to_Red_Hat_OpenShift_AI-en-US.pdf",
 ]
-DOCS_LOCAL_DIR_NAME = "docs"
+DOCS_LOCAL_DIR_NAME = Path("docs")
 
 # True to convert PDFs to JSONs as a part of Paragon's indexing pipeline and False to do it externally
 TEST_PDF_TO_JSON_CONVERSION = False
@@ -40,6 +44,9 @@ def docling_convert(docs):
 
 
 def main():
+    # ensure the documents directory exists before the script is executed
+    DOCS_LOCAL_DIR_NAME.mkdir(parents=True, exist_ok=True)
+
     # download and convert source PDF documents to JSON format using docling
     print("Step 1: Documents specified will be fetched and converted into JSON using Docling (if not already done) \n")
     docling_convert(SOURCE_PDF_URLS)
