@@ -4,9 +4,10 @@ from haystack.components.generators import OpenAIGenerator
 from haystack.components.joiners import DocumentJoiner
 from haystack.components.rankers import TransformersSimilarityRanker
 from haystack.utils import Secret
-#from haystack_integrations.components.retrievers.elasticsearch import ElasticsearchEmbeddingRetriever, \
+# from haystack_integrations.components.retrievers.elasticsearch import ElasticsearchEmbeddingRetriever, \
 #    ElasticsearchBM25Retriever
 from milvus_haystack import MilvusEmbeddingRetriever
+from openai import OpenAI
 
 from pragmatic.pipelines.pipeline import CommonPipelineWrapper
 
@@ -29,6 +30,7 @@ BASE_RAG_PROMPT = """You are an assistant for question-answering tasks.
     Answer:
     """
 
+
 class RagPipelineWrapper(CommonPipelineWrapper):
     def __init__(self, settings, query=None, evaluation_mode=False):
         super().__init__(settings)
@@ -43,7 +45,7 @@ class RagPipelineWrapper(CommonPipelineWrapper):
     def __init_sparse_retriever(self):
         vector_db_type = self._settings["vector_db_type"]
         document_store = self._init_document_store(retrieval_mode=True)
-        #if vector_db_type.lower() == "elasticsearch":
+        # if vector_db_type.lower() == "elasticsearch":
         #    return ElasticsearchBM25Retriever(document_store=document_store, top_k=self._settings["elasticsearch_top_k"])
 
         raise ValueError(f"Unsupported vector DB type for sparse retrieval: {vector_db_type}")
@@ -53,7 +55,7 @@ class RagPipelineWrapper(CommonPipelineWrapper):
         document_store = self._init_document_store(retrieval_mode=True)
         if vector_db_type.lower() == "milvus":
             return MilvusEmbeddingRetriever(document_store=document_store, top_k=self._settings["top_k"])
-        #if vector_db_type.lower() == "elasticsearch":
+        # if vector_db_type.lower() == "elasticsearch":
         #    return ElasticsearchEmbeddingRetriever(document_store=document_store, top_k=self._settings["top_k"])
 
         raise ValueError(f"Unsupported vector DB type: {vector_db_type}")
@@ -76,9 +78,11 @@ class RagPipelineWrapper(CommonPipelineWrapper):
         elif retriever_type == "dense":
             self._add_embedder(self._query)
             self._add_component("retriever", dense_retriever,
-                                component_from_connect_point="embedder.embedding", component_to_connect_point="retriever.query_embedding")
+                                component_from_connect_point="embedder.embedding",
+                                component_to_connect_point="retriever.query_embedding")
         else:  # retriever_type == "hybrid"
-            self._add_component("sparse_retriever", sparse_retriever, component_args={"query": self._query}, should_connect=False)
+            self._add_component("sparse_retriever", sparse_retriever, component_args={"query": self._query},
+                                should_connect=False)
             self._add_embedder(self._query)
             self._add_component("dense_retriever", dense_retriever, should_connect=False)
             self._add_component("document_joiner", DocumentJoiner(), should_connect=False)
@@ -102,17 +106,39 @@ class RagPipelineWrapper(CommonPipelineWrapper):
 
     def _add_llm(self):
         llm = OpenAIGenerator(
-            api_key=Secret.from_token("VLLM-PLACEHOLDER-API-KEY"),  # for compatibility with the OpenAI API
+            api_key=self._settings["llm_api_key"],
             model=self._settings["llm"],
             api_base_url=self._settings["llm_base_url"],
-            generation_kwargs={"max_tokens": 512}
+            timeout=self._settings["llm_connection_timeout"],
+            max_retries=self._settings["llm_connection_max_retries"],
+            system_prompt=self._settings["llm_system_prompt"],
+            organization=self._settings["llm_organization"],
+            generation_kwargs={
+                "max_tokens": self._settings["llm_response_max_tokens"],
+                "temperature": self._settings["llm_temperature"],
+                "top_p": self._settings["llm_top_p"],
+                "n": self._settings["llm_num_completions"],
+                "stop": self._settings["llm_stop_sequences"],
+                "frequency_penalty": self._settings["llm_frequency_penalty"],
+                "presence_penalty": self._settings["llm_presence_penalty"],
+                "logit_bias": self._settings["llm_logit_bias"],
+            }
         )
+        if "llm_http_client" in self._settings and self._settings["llm_http_client"] is not None:
+            # Haystack does not support setting the HTTP client directly, so we need to redefine the OpenAI object
+            llm.client = OpenAI(api_key=self._settings["llm_api_key"],
+                                organization=self._settings["llm_organization"],
+                                base_url=self._settings["llm_base_url"],
+                                timeout=self._settings["llm_connection_timeout"],
+                                max_retries=self._settings["llm_connection_max_retries"],
+                                http_client=self._settings["llm_http_client"])
         self._add_component("llm", llm)
 
     def _add_answer_builder(self):
         if not self._evaluation_mode:
             return
-        self._add_component("answer_builder", AnswerBuilder(), component_args={"query": self._query}, should_connect=False)
+        self._add_component("answer_builder", AnswerBuilder(), component_args={"query": self._query},
+                            should_connect=False)
         self._pipeline.connect("llm.replies", "answer_builder.replies")
         self._pipeline.connect("retriever", "answer_builder.documents")
 

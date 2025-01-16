@@ -1,4 +1,5 @@
 # from haystack_integrations.components.evaluators.ragas import RagasMetric
+from haystack.utils import Secret
 
 DEFAULT_SETTINGS = {
     # basic settings
@@ -16,7 +17,10 @@ DEFAULT_SETTINGS = {
     "milvus_deployment_type": "lite",
     "milvus_file_path": "./milvus.db",
     "milvus_server_url": "http://milvus-service:19530",
-    "drop_old_collection": True,
+    "milvus_auth_token": None,   # use Secret.from_env_var("MILVUS_TOKEN_ENV_VAR_NAME") to enable authentication
+    "milvus_drop_old_collection": True,
+    "milvus_connection_timeout": None,
+    "milvus_collection_name": "PragmaticCollection",
 
     # chunking options
     "chunking_enabled": True,
@@ -35,6 +39,20 @@ DEFAULT_SETTINGS = {
     # LLM-related settings
     "llm": "mistralai/Mistral-7B-Instruct-v0.2",
     "llm_base_url": "http://127.0.0.1:8000/v1",
+    "llm_api_key": Secret.from_token("VLLM-PLACEHOLDER-API-KEY"),  # use Secret.from_env_var("API_KEY_ENV_VAR_NAME") to enable authentication
+    "llm_connection_timeout": 30,
+    "llm_connection_max_retries": 3,
+    "llm_system_prompt": None,
+    "llm_organization": None,
+    "llm_response_max_tokens": 512,
+    "llm_temperature": 1,
+    "llm_top_p": 1,
+    "llm_num_completions": 1,
+    "llm_stop_sequences": None,
+    "llm_frequency_penalty": 0.0,
+    "llm_presence_penalty": 0.0,
+    "llm_logit_bias": None,
+    "llm_http_client": None,
 
     # advanced RAG options
     "top_k": 1,

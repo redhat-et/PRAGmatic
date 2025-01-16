@@ -73,8 +73,13 @@ class CommonPipelineWrapper(PipelineWrapper, ABC):
                 milvus_connection_args = {"uri": self._settings["milvus_server_url"]}
             else:
                 raise ValueError(f"Unsupported Milvus deployment type: {milvus_deployment_type}")
-            drop_old = False if retrieval_mode else self._settings["drop_old_collection"]
-            return MilvusDocumentStore(connection_args=milvus_connection_args, drop_old=drop_old)
+            if "milvus_auth_token" in self._settings and self._settings["milvus_auth_token"] is not None:
+                milvus_connection_args["token"] = self._settings["milvus_auth_token"]
+            drop_old = False if retrieval_mode else self._settings["milvus_drop_old_collection"]
+            return MilvusDocumentStore(connection_args=milvus_connection_args,
+                                       collection_name=self._settings["milvus_collection_name"],
+                                       timeout=self._settings["milvus_connection_timeout"],
+                                       drop_old=drop_old)
 
         #if vector_db_type.lower() == "elasticsearch":
         #    return ElasticsearchDocumentStore(hosts=self._settings["elasticsearch_host_url"],
