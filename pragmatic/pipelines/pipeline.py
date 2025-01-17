@@ -5,6 +5,7 @@ from haystack import Pipeline
 from milvus_haystack import MilvusDocumentStore
 
 import logging
+
 logger = logging.getLogger(__name__)
 
 
@@ -58,6 +59,12 @@ class PipelineWrapper(object):
 
 
 class CommonPipelineWrapper(PipelineWrapper, ABC):
+    DEFAULT_LOCAL_MILVUS_INDEX_SETTINGS = {
+        "metric_type": "L2",
+        "index_type": "IVF_FLAT",
+        "params": {"M": 8, "efConstruction": 64},
+    }
+
     def __init__(self, settings):
         super().__init__()
         self._settings = settings
@@ -73,15 +80,25 @@ class CommonPipelineWrapper(PipelineWrapper, ABC):
                 milvus_connection_args = {"uri": self._settings["milvus_server_url"]}
             else:
                 raise ValueError(f"Unsupported Milvus deployment type: {milvus_deployment_type}")
+
             if "milvus_auth_token" in self._settings and self._settings["milvus_auth_token"] is not None:
                 milvus_connection_args["token"] = self._settings["milvus_auth_token"]
+
             drop_old = False if retrieval_mode else self._settings["milvus_drop_old_collection"]
+
+            # This is a workaround over an issue with the milvus-haystack integration component. When no index parameters are
+            # provided, MilvusDocumentStore tries to create a HNSW index, which is not supported in Lite mode. Thus, when
+            # Lite mode is desired, we have to provide our own index parameters.
+            index_params = CommonPipelineWrapper.DEFAULT_LOCAL_MILVUS_INDEX_SETTINGS \
+                if self._settings["milvus_deployment_type"] == 'lite' else None
+
             return MilvusDocumentStore(connection_args=milvus_connection_args,
                                        collection_name=self._settings["milvus_collection_name"],
                                        timeout=self._settings["milvus_connection_timeout"],
-                                       drop_old=drop_old)
+                                       drop_old=drop_old,
+                                       index_params=index_params)
 
-        #if vector_db_type.lower() == "elasticsearch":
+        # if vector_db_type.lower() == "elasticsearch":
         #    return ElasticsearchDocumentStore(hosts=self._settings["elasticsearch_host_url"],
         #                                      basic_auth=(self._settings["elasticsearch_user"], self._settings["elasticsearch_password"]),
         #                                      index=self._settings["elasticsearch_index_name"])
