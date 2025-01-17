@@ -1,4 +1,3 @@
 docling>=2.9.0
-fastapi==0.115.6
 milvus_haystack==0.0.11
-uvicorn==0.32.1
+docling_haystack==0.1.1

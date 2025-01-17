@@ -1,19 +1,15 @@
 import argparse
 
-import uvicorn
-from fastapi import FastAPI
-
 from api import index_path_for_rag, execute_rag_query, evaluate_rag_pipeline
 from settings import DEFAULT_SETTINGS
 
 
 def main():
     """
-    The tool can be executed in one of the following four modes:
+    The tool can be executed in one of the following modes:
     1) Indexing mode (-i flag) - index a collection of documents from the given path.
     2) RAG query mode (-r flag) - answer a given query with RAG using the previously indexed documents.
-    3) Evaluation mode (-e flag) - evaluate the RAG pipeline as specified in the settings.
-    4) Server mode (-s flag) - run a FastAPI server accepting indexing and query requests.
+    3) Evaluation mode (-e flag) - evaluate the RAG pipeline as specified in the settings - NOT YET OFFICIALLY SUPPORTED.
     """
     parser = argparse.ArgumentParser(description='RAG Pipeline PoC')
 
@@ -24,9 +20,6 @@ def main():
     parser.add_argument('--query', help='The query for the language model to answer.')
 
     parser.add_argument('-e', '--evaluation', help='Evaluate the RAG pipeline', action='store_true')
-
-    parser.add_argument('-s', '--server', help='Run a FastAPI server to serve the RAG pipeline', action='store_true')
-    parser.add_argument('--port', help='The port for the server to listen on.', type=int, default=8000)
 
     # Positional arguments to capture overrides of default settings
     parser.add_argument('overrides', nargs='*', help="Optionally override default settings as key=value")
@@ -68,24 +61,6 @@ def main():
 
     if args.evaluation:
         print(evaluate_rag_pipeline(**custom_settings))
-
-    if args.server:
-        app = FastAPI(title="RAG Pipeline PoC", description="An API server for indexing RAG documents and querying/evaluating the RAG pipeline.")
-
-        @app.get("/indexing")
-        def run_indexing_pipeline(document_path: str):
-            return index_path_for_rag(document_path, **custom_settings)
-
-        @app.get("/query")
-        def query_rag_pipeline(query: str):
-            return execute_rag_query(query, **custom_settings)
-
-        @app.get("/eval")
-        def run_eval_pipeline():
-            return evaluate_rag_pipeline(**custom_settings)
-
-        print(f"Starting FastAPI server on port {args.port}...")
-        uvicorn.run(app, host="0.0.0.0", port=args.port)
 
 
 if __name__ == "__main__":
