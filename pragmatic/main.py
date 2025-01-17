@@ -27,7 +27,7 @@ def main():
     args = parser.parse_args()
 
     if sum([args.indexing, args.rag, args.evaluation, args.server]) != 1:
-        print("Wrong usage: exactly one of the supported operation modes (indexing, query, evaluation or server) must be specified.")
+        print("Wrong usage: exactly one of the supported operation modes (indexing, query) must be specified.")
         return
 
     custom_settings = {}
