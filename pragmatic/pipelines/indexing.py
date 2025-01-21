@@ -10,10 +10,17 @@ from haystack.components.writers import DocumentWriter
 from docling_haystack.converter import DoclingConverter, ExportType
 
 from pragmatic.haystack.docling_splitter import DoclingDocumentSplitter
+from pragmatic.optimizations.finetuning import finetune_embedding_model
 from pragmatic.pipelines.pipeline import CommonPipelineWrapper
 
 
 class IndexingPipelineWrapper(CommonPipelineWrapper):
+    def __init__(self, settings):
+        super().__init__(settings)
+
+        # optionally fine-tune the embedding model before indexing
+        if self._settings["finetune_embedding_model"]:
+            finetune_embedding_model(self._settings)
 
     def _add_cleaner(self):
         if not self._settings["cleaner_enabled"]:
