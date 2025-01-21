@@ -1,11 +1,12 @@
 # from haystack_integrations.components.evaluators.ragas import RagasMetric
 from haystack.utils import Secret
+from sentence_transformers.training_args import BatchSamplers
 
 DEFAULT_SETTINGS = {
     # basic settings
     "vector_db_type": "milvus",
     "retriever_type": "dense",
-    "embedding_model": "sentence-transformers/all-MiniLM-L12-v2",
+    "embedding_model_path": "sentence-transformers/all-MiniLM-L12-v2",
 
     # document conversion-related settings
     "apply_docling": False,
@@ -58,6 +59,26 @@ DEFAULT_SETTINGS = {
     "top_k": 1,
     "cleaner_enabled": False,
     "ranker_enabled": False,
+
+    # embedding model fine-tuning settings
+    "finetune_embedding_model": False,
+    "initial_embedding_model_path": "sentence-transformers/all-MiniLM-L12-v2",
+    "embedding_model_finetuning_dataset_path": "./finetuning_data.csv",
+    "embedding_model_finetuning_parameters": {
+        "num_train_epochs": 1,
+        "per_device_train_batch_size": 16,
+        "warmup_ratio": 0.1,
+        "learning_rate": 2e-5,
+        "lr_scheduler_type": "cosine",
+        "optim": "adamw_torch_fused",
+        "tf32": True,
+        "bf16": False,
+        "batch_sampler": BatchSamplers.NO_DUPLICATES,
+        "save_strategy": "epoch",
+        "save_total_limit": 2,
+        "logging_steps": 100,
+    },
+
 
     # evaluation metrics
     "eval_documents_path": "./docs",

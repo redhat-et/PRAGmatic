@@ -39,7 +39,7 @@ class RagPipelineWrapper(CommonPipelineWrapper):
         self._evaluation_mode = evaluation_mode
 
     def _add_embedder(self, query):
-        embedder = SentenceTransformersTextEmbedder(model=self._settings["embedding_model"])
+        embedder = SentenceTransformersTextEmbedder(model=self._settings["embedding_model_path"])
         self._add_component("embedder", embedder, component_args={"text": query})
 
     def __init_sparse_retriever(self):

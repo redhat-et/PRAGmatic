@@ -43,7 +43,7 @@ class IndexingPipelineWrapper(CommonPipelineWrapper):
         self._add_component("splitter", splitter)
 
     def _add_embedder(self):
-        embedder = SentenceTransformersDocumentEmbedder(model=self._settings["embedding_model"])
+        embedder = SentenceTransformersDocumentEmbedder(model=self._settings["embedding_model_path"])
         self._add_component("embedder", embedder)
 
     def _add_writer(self):
