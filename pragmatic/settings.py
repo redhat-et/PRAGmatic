@@ -61,7 +61,7 @@ DEFAULT_SETTINGS = {
     "ranker_enabled": False,
 
     # embedding model fine-tuning settings
-    "finetune_embedding_model": True,
+    "finetune_embedding_model": False,
     "initial_embedding_model_path": "sentence-transformers/all-MiniLM-L12-v2",
     "embedding_model_finetuning_dataset_path": "sentence-transformers/all-nli",
     "embedding_model_finetuning_dataset_subset_name": "pair-score",
