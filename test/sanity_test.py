@@ -56,7 +56,7 @@ def main():
     index_path_for_rag(DOCS_LOCAL_DIR_NAME,
                        milvus_deployment_type="lite",
                        milvus_file_path="./milvus.db",
-                       embedding_model="sentence-transformers/all-MiniLM-L12-v2",
+                       embedding_model_path="sentence-transformers/all-MiniLM-L12-v2",
                        input_document_formats=['pdf'] if TEST_PDF_TO_JSON_CONVERSION else ['json'])
 
     # execute a simple RAG query
@@ -64,7 +64,7 @@ def main():
     print("Question: How to install OpenShift CLI on macOS?")
     result1 = execute_rag_query("How to install OpenShift CLI on macOS?",
                                milvus_file_path="./milvus.db",
-                               embedding_model="sentence-transformers/all-MiniLM-L12-v2",
+                               embedding_model_path="sentence-transformers/all-MiniLM-L12-v2",
                                llm_base_url="http://vllm-service:8000/v1",
                                top_k=3)
     print("Response generated:")
@@ -73,7 +73,7 @@ def main():
     print("Question: What are the two deployment options in OpenShift AI?")
     result2 = execute_rag_query("What are the two deployment options in OpenShift AI?",
                                milvus_file_path="./milvus.db",
-                               embedding_model="sentence-transformers/all-MiniLM-L12-v2",
+                               embedding_model_path="sentence-transformers/all-MiniLM-L12-v2",
                                llm_base_url="http://vllm-service:8000/v1",
                                top_k=3)
     print("Response generated:")
@@ -82,7 +82,7 @@ def main():
     print("Question: What is OpenShift AI?")
     result3 = execute_rag_query("What is OpenShift AI?",
                                milvus_file_path="./milvus.db",
-                               embedding_model="sentence-transformers/all-MiniLM-L12-v2",
+                               embedding_model_path="sentence-transformers/all-MiniLM-L12-v2",
                                llm_base_url="http://vllm-service:8000/v1",
                                top_k=3)
     print("Response generated:")

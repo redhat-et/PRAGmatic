@@ -6,7 +6,7 @@ DEFAULT_SETTINGS = {
     # basic settings
     "vector_db_type": "milvus",
     "retriever_type": "dense",
-    "embedding_model_path": "./models/finetuned_embedding-final",
+    "embedding_model_path": "./cache/finetuned_embedding-final",
 
     # document conversion-related settings
     "apply_docling": False,
@@ -72,8 +72,6 @@ DEFAULT_SETTINGS = {
         "learning_rate": 2e-5,
         "lr_scheduler_type": "cosine",
         "optim": "adamw_torch_fused",
-        "tf32": True,
-        "bf16": False,
         "batch_sampler": BatchSamplers.NO_DUPLICATES,
         "save_strategy": "epoch",
         "save_total_limit": 2,
