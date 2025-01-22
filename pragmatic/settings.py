@@ -54,6 +54,7 @@ DEFAULT_SETTINGS = {
     "llm_presence_penalty": 0.0,
     "llm_logit_bias": None,
     "llm_http_client": None,
+    "generator_object": None,  # an instance of a Haystack-compatible generator object
 
     # advanced RAG options
     "top_k": 1,

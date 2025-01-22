@@ -105,6 +105,11 @@ class RagPipelineWrapper(CommonPipelineWrapper):
                             component_to_connect_point="prompt_builder.documents")
 
     def _add_llm(self):
+        if "generator_object" in self._settings and self._settings["generator_object"] is not None:
+            # an object to use for communicating with the model was explicitly specified and we should use it
+            self._add_component("llm", self._settings["generator_object"])
+            return
+
         llm = OpenAIGenerator(
             api_key=self._settings["llm_api_key"],
             model=self._settings["llm"],
