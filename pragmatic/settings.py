@@ -6,7 +6,7 @@ DEFAULT_SETTINGS = {
     # basic settings
     "vector_db_type": "milvus",
     "retriever_type": "dense",
-    "embedding_model_path": "sentence-transformers/all-MiniLM-L12-v2",
+    "embedding_model_path": "./models/finetuned_embedding-final",
 
     # document conversion-related settings
     "apply_docling": False,
@@ -61,9 +61,10 @@ DEFAULT_SETTINGS = {
     "ranker_enabled": False,
 
     # embedding model fine-tuning settings
-    "finetune_embedding_model": False,
+    "finetune_embedding_model": True,
     "initial_embedding_model_path": "sentence-transformers/all-MiniLM-L12-v2",
-    "embedding_model_finetuning_dataset_path": "./finetuning_data.csv",
+    "embedding_model_finetuning_dataset_path": "sentence-transformers/all-nli",
+    "embedding_model_finetuning_dataset_subset_name": "pair-score",
     "embedding_model_finetuning_parameters": {
         "num_train_epochs": 1,
         "per_device_train_batch_size": 16,
