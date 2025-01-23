@@ -42,6 +42,12 @@ def docling_convert(docs):
             result.document.save_as_json(Path(base_output_path + ".json"))
     print("Successfully converted the documents and saved as JSON in local directory specified \n")
 
+def print_stream_data(result_generator):
+    # Process each chunk as it arrives
+    for chunk in result_generator:
+        decoded_chunk = chunk.decode("utf-8")
+        print(decoded_chunk, end="", flush=True) 
+
 
 def main():
     # ensure the documents directory exists before the script is executed
@@ -68,7 +74,7 @@ def main():
                                llm_base_url="http://vllm-service:8000/v1",
                                top_k=3)
     print("Response generated:")
-    print(f"\n{result1}")
+    print_stream_data(result1)
     print("\n")
     print("Question: What are the two deployment options in OpenShift AI?")
     result2 = execute_rag_query("What are the two deployment options in OpenShift AI?",
@@ -77,7 +83,7 @@ def main():
                                llm_base_url="http://vllm-service:8000/v1",
                                top_k=3)
     print("Response generated:")
-    print(f"\n{result2}")
+    print_stream_data(result2)
     print("\n")
     print("Question: What is OpenShift AI?")
     result3 = execute_rag_query("What is OpenShift AI?",
@@ -86,7 +92,7 @@ def main():
                                llm_base_url="http://vllm-service:8000/v1",
                                top_k=3)
     print("Response generated:")
-    print(f"\n{result3}")
+    print_stream_data(result3)
 
 
 if __name__ == '__main__':

@@ -6,7 +6,7 @@ DEFAULT_SETTINGS = {
     # basic settings
     "vector_db_type": "milvus",
     "retriever_type": "dense",
-    "embedding_model_path": "./cache/finetuned_embedding-final",
+    "embedding_model_path": "sentence-transformers/all-MiniLM-L12-v2", #"./cache/finetuned_embedding-final",
 
     # document conversion-related settings
     "apply_docling": False,
@@ -38,8 +38,8 @@ DEFAULT_SETTINGS = {
     "converted_docling_document_format": "json",
 
     # LLM-related settings
-    "llm": "mistralai/Mistral-7B-Instruct-v0.2",
-    "llm_base_url": "http://127.0.0.1:8000/v1",
+    "llm": "instructlab/granite-7b-lab-GGUF",
+    "llm_base_url": "http://vllm-service:8000/v1",
     "llm_api_key": Secret.from_token("VLLM-PLACEHOLDER-API-KEY"),  # use Secret.from_env_var("API_KEY_ENV_VAR_NAME") to enable authentication
     "llm_connection_timeout": 30,
     "llm_connection_max_retries": 3,
@@ -55,6 +55,8 @@ DEFAULT_SETTINGS = {
     "llm_logit_bias": None,
     "llm_http_client": None,
     "generator_object": None,  # an instance of a Haystack-compatible generator object
+
+    "stream": True,
 
     # advanced RAG options
     "top_k": 1,

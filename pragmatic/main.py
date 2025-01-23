@@ -1,3 +1,8 @@
+# addressing the issue where the project structure causes pragmatic to not be on the path
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.getcwd()))
+
 import argparse
 
 from api import index_path_for_rag, execute_rag_query, evaluate_rag_pipeline
@@ -26,7 +31,7 @@ def main():
 
     args = parser.parse_args()
 
-    if sum([args.indexing, args.rag, args.evaluation, args.server]) != 1:
+    if sum([args.indexing, args.rag, args.evaluation]) != 1:
         print("Wrong usage: exactly one of the supported operation modes (indexing, query) must be specified.")
         return
 
@@ -57,7 +62,14 @@ def main():
         if args.query is None:
             print("Please specify the query.")
             return
-        print(execute_rag_query(args.query, **custom_settings))
+
+        # Execute query and get a generator
+        result_generator = execute_rag_query(args.query, **custom_settings)
+        
+        # Process each chunk as it arrives
+        for chunk in result_generator:
+            decoded_chunk = chunk.decode("utf-8")
+            print(decoded_chunk, end="", flush=True)
 
     if args.evaluation:
         print(evaluate_rag_pipeline(**custom_settings))

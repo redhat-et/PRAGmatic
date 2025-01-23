@@ -11,6 +11,12 @@ from openai import OpenAI
 
 from pragmatic.pipelines.pipeline import CommonPipelineWrapper
 
+from threading import Thread, Event
+from queue import Queue
+
+
+STREAM_TIMEOUT = 10 # seconds
+
 BASE_RAG_PROMPT = """You are an assistant for question-answering tasks. 
 
     Here is the context to use to answer the question:
@@ -31,12 +37,72 @@ BASE_RAG_PROMPT = """You are an assistant for question-answering tasks.
     """
 
 
+class RagStreamHandler:
+    def __init__(self):
+        self._stream_queue = None
+        self._stream_thread = None
+        self._stop_event = Event()
+
+    def __del__(self):
+        """
+        Finalizer for cleanup. Ensures threads and resources are released.
+        """
+        self.stop_stream()
+
+    def _streaming_callback(self, chunk):
+        """
+        Callback to be passed to the LLM, which places streamed tokens into the queue.
+        """
+        if self._stream_queue:
+            self._stream_queue.put(chunk.content)
+
+    def _run_streaming_in_thread(self, run_callable):
+        """
+        Invokes the provided callable (the pipeline's run method),
+        then signals the end of streaming by putting None in the queue.
+        """
+        run_callable()
+        if self._stream_queue:
+            self._stream_queue.put(None)
+
+    def start_stream(self, run_callable):
+        """
+        Initializes the queue and the background thread that executes `run_callable`.
+        """
+        self._stream_queue = Queue()
+        self._stream_thread = Thread(target=self._run_streaming_in_thread, args=(run_callable,))
+        self._stream_thread.start()
+
+    def stop_stream(self):
+        """
+        Gracefully stops the streaming thread if it is running.
+        """
+        if self._stream_thread and self._stream_thread.is_alive():
+            self._stop_event.set()  # Signal the thread to stop
+            self._stream_thread.join()  # Wait for the thread to finish
+        self._stream_queue = None  # Clean up the queue
+        self._stop_event.clear()  # Reset the flag for future use
+
+    def stream_chunks(self):
+        """
+        Yields streamed chunks from the queue. 
+        Terminates when `None` is retrieved from the queue.
+        """
+        try:
+            for chunk in iter(lambda: self._stream_queue.get(timeout=STREAM_TIMEOUT), None):
+                yield chunk.encode("utf-8")
+        finally:
+            self.stop_stream()
+
+
 class RagPipelineWrapper(CommonPipelineWrapper):
     def __init__(self, settings, query=None, evaluation_mode=False):
         super().__init__(settings)
         self._query = query
-
         self._evaluation_mode = evaluation_mode
+
+        self.streaming_handler = RagStreamHandler()
+        self.llm = None
 
     def _add_embedder(self, query):
         embedder = SentenceTransformersTextEmbedder(model=self._settings["embedding_model_path"])
@@ -104,11 +170,21 @@ class RagPipelineWrapper(CommonPipelineWrapper):
         self._add_component("prompt_builder", prompt_builder, component_args={"query": self._query},
                             component_to_connect_point="prompt_builder.documents")
 
+
+    def stream_query(self):
+        self.streaming_handler.start_stream(lambda: super(RagPipelineWrapper, self).run())
+        return self.streaming_handler.stream_chunks()
+    
     def _add_llm(self):
         if "generator_object" in self._settings and self._settings["generator_object"] is not None:
             # an object to use for communicating with the model was explicitly specified and we should use it
             self._add_component("llm", self._settings["generator_object"])
             return
+        
+        custom_callback = (
+            self.streaming_handler._streaming_callback
+            if self._settings.get("stream") else None
+        )
 
         llm = OpenAIGenerator(
             api_key=self._settings["llm_api_key"],
@@ -118,6 +194,7 @@ class RagPipelineWrapper(CommonPipelineWrapper):
             max_retries=self._settings["llm_connection_max_retries"],
             system_prompt=self._settings["llm_system_prompt"],
             organization=self._settings["llm_organization"],
+            streaming_callback=custom_callback,
             generation_kwargs={
                 "max_tokens": self._settings["llm_response_max_tokens"],
                 "temperature": self._settings["llm_temperature"],
@@ -170,10 +247,18 @@ class RagPipelineWrapper(CommonPipelineWrapper):
                 for key in ["text", "query"]:
                     if key in config_dict:
                         config_dict[key] = query
+    
+        # If streaming is enabled
+        if self._settings.get("stream", False) and not self._evaluation_mode:
+            return self.stream_query()
 
+        # Otherwise, execute a normal pipeline run
         result = super().run()
 
+        # Return answer builder output in evaluation mode
         if self._evaluation_mode:
-            return result["answer_builder"]["answers"][0]
+            return result.get("answer_builder").get("answers")[0]
 
-        return result["llm"]["replies"][0]
+        # Return the final LLM reply as utf-8 encoded bytes wrapped in a generator
+        llm_reply = result.get("llm", {}).get("replies", [None])[0].strip()
+        return (chunk.encode("utf-8") for chunk in [llm_reply])  # Wrap in a generator
