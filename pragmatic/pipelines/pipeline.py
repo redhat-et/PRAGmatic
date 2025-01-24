@@ -50,9 +50,12 @@ class PipelineWrapper(object):
     def _set_last_connect_point(self, connect_point):
         self.__last_connect_point = connect_point
 
-    def run(self):
-        logger.debug(f"Executing the pipeline with the following arguments:\n{self._args}")
-        return self._pipeline.run(self._args)
+    def run(self, pipeline_args_dict=None):
+        if pipeline_args_dict:
+            logger.debug(f"Executing the pipeline with the following arguments:\n{pipeline_args_dict}")
+            return self._pipeline.run(pipeline_args_dict)
+        else:
+            return self._pipeline.run(self._args)
 
     def build_pipeline(self):
         raise NotImplementedError()
