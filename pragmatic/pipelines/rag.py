@@ -32,15 +32,13 @@ BASE_RAG_PROMPT = """You are an assistant for question-answering tasks.
 
 
 class RagPipelineWrapper(CommonPipelineWrapper):
-    def __init__(self, settings, query=None, evaluation_mode=False):
+    def __init__(self, settings, evaluation_mode=False):
         super().__init__(settings)
-        self._query = query
-
         self._evaluation_mode = evaluation_mode
 
-    def _add_embedder(self, query):
+    def _add_embedder(self):
         embedder = SentenceTransformersTextEmbedder(model=self._settings["embedding_model_path"])
-        self._add_component("embedder", embedder, component_args={"text": query})
+        self._add_component("embedder", embedder)
 
     def __init_sparse_retriever(self):
         vector_db_type = self._settings["vector_db_type"]
@@ -74,16 +72,16 @@ class RagPipelineWrapper(CommonPipelineWrapper):
             dense_retriever = self.__init_dense_retriever()
 
         if retriever_type == "sparse":
-            self._add_component("retriever", sparse_retriever, component_args={"query": self._query})
+            self._add_component("retriever", sparse_retriever)
         elif retriever_type == "dense":
-            self._add_embedder(self._query)
+            self._add_embedder()
             self._add_component("retriever", dense_retriever,
                                 component_from_connect_point="embedder.embedding",
                                 component_to_connect_point="retriever.query_embedding")
         else:  # retriever_type == "hybrid"
-            self._add_component("sparse_retriever", sparse_retriever, component_args={"query": self._query},
+            self._add_component("sparse_retriever", sparse_retriever,
                                 should_connect=False)
-            self._add_embedder(self._query)
+            self._add_embedder()
             self._add_component("dense_retriever", dense_retriever, should_connect=False)
             self._add_component("document_joiner", DocumentJoiner(), should_connect=False)
 
@@ -97,11 +95,11 @@ class RagPipelineWrapper(CommonPipelineWrapper):
         if not self._settings["ranker_enabled"]:
             return
         ranker = TransformersSimilarityRanker(model=self._settings["ranking_model"])
-        self._add_component("ranker", ranker, component_args={"query": self._query})
+        self._add_component("ranker", ranker)
 
     def _add_prompt_builder(self):
         prompt_builder = PromptBuilder(template=BASE_RAG_PROMPT)
-        self._add_component("prompt_builder", prompt_builder, component_args={"query": self._query},
+        self._add_component("prompt_builder", prompt_builder,
                             component_to_connect_point="prompt_builder.documents")
 
     def _add_llm(self):
@@ -142,7 +140,7 @@ class RagPipelineWrapper(CommonPipelineWrapper):
     def _add_answer_builder(self):
         if not self._evaluation_mode:
             return
-        self._add_component("answer_builder", AnswerBuilder(), component_args={"query": self._query},
+        self._add_component("answer_builder", AnswerBuilder(),
                             should_connect=False)
         self._pipeline.connect("llm.replies", "answer_builder.replies")
         self._pipeline.connect("retriever", "answer_builder.documents")
@@ -170,10 +168,37 @@ class RagPipelineWrapper(CommonPipelineWrapper):
                 for key in ["text", "query"]:
                     if key in config_dict:
                         config_dict[key] = query
-
-        result = super().run()
-
+        
         if self._evaluation_mode:
+            if ((self._settings["ranker_enabled"])):
+                if(self._settings["retriever_type"]=="dense"):
+                    result = super().run({"embedder": {"text": query}, "prompt_builder": {"query": query}, "ranker": {"query": query}, "answer_builder": {"text": query}})
+                elif (self._settings["retriever_type"]=="sparse"):
+                    result = super().run({"embedder": {"text": query}, "prompt_builder": {"query": query}, "ranker": {"query": query}, "retriever": {"query": query}, "answer_builder": {"text": query}})
+                else: #if retriever type is hybrid
+                    result = super().run({"embedder": {"text": query}, "prompt_builder": {"query": query}, "ranker": {"query": query}, "sparse_retriever": {"query": query}, "answer_builder": {"text": query}})
+            else: #if ranker not enabled
+                if(self._settings["retriever_type"]=="dense"):
+                    result = super().run({"embedder": {"text": query}, "prompt_builder": {"query": query}, "answer_builder": {"query": query}})
+                elif(self._settings["retriever_type"]=="sparse"):
+                    result = super().run({"embedder": {"text": query}, "prompt_builder": {"query": query}, "retriever": {"query": query}, "answer_builder": {"text": query}})
+                else: #if retriever type is hybrid
+                    result = super().run({"embedder": {"text": query}, "prompt_builder": {"query": query}, "sparse_retriever": {"query": query}, "answer_builder": {"text": query}})
             return result["answer_builder"]["answers"][0]
 
-        return result["llm"]["replies"][0]
+        else: #not in eval mode
+            if ((self._settings["ranker_enabled"])):
+                if(self._settings["retriever_type"]=="dense"):
+                    result = super().run({"embedder": {"text": query}, "prompt_builder": {"query": query}, "ranker": {"query": query}})
+                elif (self._settings["retriever_type"]=="sparse"):
+                    result = super().run({"embedder": {"text": query}, "prompt_builder": {"query": query}, "ranker": {"query": query}, "retriever": {"query": query}})
+                else: #if retriever type is hybrid
+                    result = super().run({"embedder": {"text": query}, "prompt_builder": {"query": query}, "ranker": {"query": query}, "sparse_retriever": {"query": query}})
+            else: #if ranker not enabled
+                if(self._settings["retriever_type"]=="dense"):
+                    result = super().run({"embedder": {"text": query}, "prompt_builder": {"query": query}})
+                elif(self._settings["retriever_type"]=="sparse"):
+                    result = super().run({"embedder": {"text": query}, "prompt_builder": {"query": query}, "retriever": {"query": query}})
+                else: #if retriever type is hybrid
+                    result = super().run({"embedder": {"text": query}, "prompt_builder": {"query": query}, "sparse_retriever": {"query": query}})
+            return result["llm"]["replies"][0]
