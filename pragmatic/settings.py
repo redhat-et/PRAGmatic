@@ -38,8 +38,8 @@ DEFAULT_SETTINGS = {
     "converted_docling_document_format": "json",
 
     # LLM-related settings
-    "llm": "instructlab/granite-7b-lab-GGUF",
-    "llm_base_url": "http://vllm-service:8000/v1",
+    "llm": "mistralai/Mistral-7B-Instruct-v0.2",
+    "llm_base_url": "http://127.0.0.1:8000/v1",
     "llm_api_key": Secret.from_token("VLLM-PLACEHOLDER-API-KEY"),  # use Secret.from_env_var("API_KEY_ENV_VAR_NAME") to enable authentication
     "llm_connection_timeout": 30,
     "llm_connection_max_retries": 3,
@@ -56,7 +56,8 @@ DEFAULT_SETTINGS = {
     "llm_http_client": None,
     "generator_object": None,  # an instance of a Haystack-compatible generator object
 
-    "stream": True,
+    "enable_response_streaming": True,
+    'streaming_timeout': 30, # Default timeout is 60 seconds if not specified
 
     # advanced RAG options
     "top_k": 1,

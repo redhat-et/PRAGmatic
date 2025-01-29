@@ -68,8 +68,7 @@ def main():
         
         # Process each chunk as it arrives
         for chunk in result_generator:
-            decoded_chunk = chunk.decode("utf-8")
-            print(decoded_chunk, end="", flush=True)
+            print(chunk, end="", flush=True)
 
     if args.evaluation:
         print(evaluate_rag_pipeline(**custom_settings))
