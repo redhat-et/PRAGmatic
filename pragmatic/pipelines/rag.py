@@ -12,6 +12,9 @@ from openai import OpenAI
 from pragmatic.pipelines.pipeline import CommonPipelineWrapper
 from pragmatic.pipelines.streaming import RagStreamHandler
 
+from functools import cached_property
+
+
 BASE_RAG_PROMPT = """You are an assistant for question-answering tasks. 
 
     Here is the context to use to answer the question:
@@ -37,7 +40,10 @@ class RagPipelineWrapper(CommonPipelineWrapper):
         self._query = query
         self._evaluation_mode = evaluation_mode
 
-        self._streaming_handler = RagStreamHandler(settings)
+    @cached_property
+    def _streaming_handler(self):
+        """Lazily creates and caches a RagStreamHandler on first access."""
+        return RagStreamHandler(self._settings)
 
     def _add_embedder(self, query):
         embedder = SentenceTransformersTextEmbedder(model=self._settings["embedding_model_path"])
@@ -111,10 +117,9 @@ class RagPipelineWrapper(CommonPipelineWrapper):
             self._add_component("llm", self._settings["generator_object"])
             return
         
-        custom_callback = (
-            self._streaming_handler._streaming_callback
-            if self._settings.get("enable_response_streaming") else None
-        )
+        custom_callback = None
+        if self._settings.get("enable_response_streaming"):
+            custom_callback = self._streaming_handler._streaming_callback
 
         llm = OpenAIGenerator(
             api_key=self._settings["llm_api_key"],
@@ -196,10 +201,11 @@ class RagPipelineWrapper(CommonPipelineWrapper):
         if self._settings.get("enable_response_streaming", False) and self._evaluation_mode:
             raise ValueError("Evaluation mode does not support streaming replies.")
 
-        # Handle streaming mode if enabled
+        # If streaming is enabled, use the streaming_handler property
         if self._settings.get("enable_response_streaming", False):
             self._streaming_handler.start_stream(lambda: super(RagPipelineWrapper, self).run())
             return self._streaming_handler.stream_chunks()
+
 
         # Otherwise, execute a normal pipeline run 
         result = super().run()
