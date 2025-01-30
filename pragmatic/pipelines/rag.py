@@ -193,7 +193,7 @@ class RagPipelineWrapper(CommonPipelineWrapper):
                         config_dict[key] = query
 
         # Handle incompatible settings 
-        if self._settings.get("stream", False) and self._evaluation_mode:
+        if self._settings.get("enable_response_streaming", False) and self._evaluation_mode:
             raise ValueError("Evaluation mode does not support streaming replies.")
 
         # Handle streaming mode if enabled
