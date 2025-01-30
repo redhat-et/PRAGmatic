@@ -42,10 +42,12 @@ def docling_convert(docs):
             result.document.save_as_json(Path(base_output_path + ".json"))
     print("Successfully converted the documents and saved as JSON in local directory specified \n")
 
-def print_stream_data(result_generator):
-    # Process each chunk as it arrives
-    for chunk in result_generator:
-        print(chunk, end="", flush=True) 
+def print_stream_data(result):
+    if isinstance(result, str):  # If a string, print directly
+        print(result)
+    else:  # If a generator, process each chunk
+        for chunk in result:
+            print(chunk, end="", flush=True)
 
 
 def main():
