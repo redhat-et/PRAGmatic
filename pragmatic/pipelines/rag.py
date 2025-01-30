@@ -174,7 +174,7 @@ class RagPipelineWrapper(CommonPipelineWrapper):
         """
             Executes a query against the pipeline.
 
-            If response streaming is enabled, returns a generator that yields chunks of the response.
+            If response enable_response_streaming is enabled, returns a generator that yields chunks of the response.
             Otherwise, returns a string with the final response.
 
             If evaluation mode is enabled, the response is retrieved from the answer builder instead of the standard pipeline output.
@@ -183,7 +183,7 @@ class RagPipelineWrapper(CommonPipelineWrapper):
                 query (str, optional): The input query string to be processed.
 
             Returns:
-                str | generator: A string for non-streaming mode or a generator for streaming mode.
+                str | generator: A string when enable_response_streaming is False or a generator when enable_response_streaming is True.
         """
         # If a query is provided, update the relevant keys in the pipeline arguments
         if query:
