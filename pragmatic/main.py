@@ -63,12 +63,14 @@ def main():
             print("Please specify the query.")
             return
 
-        # Execute query and get a generator
-        result_generator = execute_rag_query(args.query, **custom_settings)
+        # Execute query and get response
+        result = execute_rag_query(args.query, **custom_settings)
         
-        # Process each chunk as it arrives
-        for chunk in result_generator:
-            print(chunk, end="", flush=True)
+        if isinstance(result, str):  # If a string, print directly
+            print(result)
+        else:  # If a generator, process each chunk
+            for chunk in result:
+                print(chunk, end="", flush=True)
 
     if args.evaluation:
         print(evaluate_rag_pipeline(**custom_settings))
