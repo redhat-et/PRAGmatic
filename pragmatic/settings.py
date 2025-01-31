@@ -6,7 +6,7 @@ DEFAULT_SETTINGS = {
     # basic settings
     "vector_db_type": "milvus",
     "retriever_type": "dense",
-    "embedding_model_path": "./cache/finetuned_embedding-final",
+    "embedding_model_path": "sentence-transformers/all-MiniLM-L12-v2", #"./cache/finetuned_embedding-final",
 
     # document conversion-related settings
     "apply_docling": False,
@@ -55,6 +55,9 @@ DEFAULT_SETTINGS = {
     "llm_logit_bias": None,
     "llm_http_client": None,
     "generator_object": None,  # an instance of a Haystack-compatible generator object
+
+    "enable_response_streaming": True,
+    'streaming_timeout': 30, # Default timeout is 60 seconds if not specified
 
     # advanced RAG options
     "top_k": 1,

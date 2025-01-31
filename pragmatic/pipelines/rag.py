@@ -10,6 +10,10 @@ from milvus_haystack import MilvusEmbeddingRetriever
 from openai import OpenAI
 
 from pragmatic.pipelines.pipeline import CommonPipelineWrapper
+from pragmatic.pipelines.streaming import RagStreamHandler
+
+from functools import cached_property
+
 
 BASE_RAG_PROMPT = """You are an assistant for question-answering tasks. 
 
@@ -30,13 +34,16 @@ BASE_RAG_PROMPT = """You are an assistant for question-answering tasks.
     Answer:
     """
 
-
 class RagPipelineWrapper(CommonPipelineWrapper):
     def __init__(self, settings, query=None, evaluation_mode=False):
         super().__init__(settings)
         self._query = query
-
         self._evaluation_mode = evaluation_mode
+
+    @cached_property
+    def _streaming_handler(self):
+        """Lazily creates and caches a RagStreamHandler on first access."""
+        return RagStreamHandler(self._settings)
 
     def _add_embedder(self, query):
         embedder = SentenceTransformersTextEmbedder(model=self._settings["embedding_model_path"])
@@ -103,12 +110,16 @@ class RagPipelineWrapper(CommonPipelineWrapper):
         prompt_builder = PromptBuilder(template=BASE_RAG_PROMPT)
         self._add_component("prompt_builder", prompt_builder, component_args={"query": self._query},
                             component_to_connect_point="prompt_builder.documents")
-
+    
     def _add_llm(self):
         if "generator_object" in self._settings and self._settings["generator_object"] is not None:
             # an object to use for communicating with the model was explicitly specified and we should use it
             self._add_component("llm", self._settings["generator_object"])
             return
+        
+        custom_callback = None
+        if self._settings.get("enable_response_streaming"):
+            custom_callback = self._streaming_handler._streaming_callback
 
         llm = OpenAIGenerator(
             api_key=self._settings["llm_api_key"],
@@ -118,6 +129,7 @@ class RagPipelineWrapper(CommonPipelineWrapper):
             max_retries=self._settings["llm_connection_max_retries"],
             system_prompt=self._settings["llm_system_prompt"],
             organization=self._settings["llm_organization"],
+            streaming_callback=custom_callback,
             generation_kwargs={
                 "max_tokens": self._settings["llm_response_max_tokens"],
                 "temperature": self._settings["llm_temperature"],
@@ -164,16 +176,44 @@ class RagPipelineWrapper(CommonPipelineWrapper):
             self._rebuild_pipeline()
 
     def run(self, query=None):
-        if query is not None:
-            # replace the query in the pipeline args
+        """
+            Executes a query against the pipeline.
+
+            If response enable_response_streaming is enabled, returns a generator that yields chunks of the response.
+            Otherwise, returns a string with the final response.
+
+            If evaluation mode is enabled, the response is retrieved from the answer builder instead of the standard pipeline output.
+
+            Parameters:
+                query (str, optional): The input query string to be processed.
+
+            Returns:
+                str | generator: A string when enable_response_streaming is False or a generator when enable_response_streaming is True.
+        """
+        # If a query is provided, update the relevant keys in the pipeline arguments
+        if query:
             for config_dict in self._args.values():
                 for key in ["text", "query"]:
                     if key in config_dict:
                         config_dict[key] = query
 
+        # Handle incompatible settings 
+        if self._settings.get("enable_response_streaming", False) and self._evaluation_mode:
+            raise ValueError("Evaluation mode does not support streaming replies.")
+
+        # If streaming is enabled, use the streaming_handler property
+        if self._settings.get("enable_response_streaming", False):
+            self._streaming_handler.start_stream(lambda: super(RagPipelineWrapper, self).run())
+            return self._streaming_handler.stream_chunks()
+
+
+        # Otherwise, execute a normal pipeline run 
         result = super().run()
 
+        #  # In evaluation mode, return the answer from the answer builder in string format
         if self._evaluation_mode:
-            return result["answer_builder"]["answers"][0]
+            return result.get("answer_builder", {}).get("answers", [""])[0]
+        
+        # Return the final LLM reply in string format
+        return result.get("llm", {}).get("replies", [""])[0]
 
-        return result["llm"]["replies"][0]

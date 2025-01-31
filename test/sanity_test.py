@@ -42,6 +42,13 @@ def docling_convert(docs):
             result.document.save_as_json(Path(base_output_path + ".json"))
     print("Successfully converted the documents and saved as JSON in local directory specified \n")
 
+def print_stream_data(result):
+    if isinstance(result, str):  # If a string, print directly
+        print(result)
+    else:  # If a generator, process each chunk
+        for chunk in result:
+            print(chunk, end="", flush=True)
+
 
 def main():
     # ensure the documents directory exists before the script is executed
@@ -65,28 +72,28 @@ def main():
     result1 = execute_rag_query("How to install OpenShift CLI on macOS?",
                                milvus_file_path="./milvus.db",
                                embedding_model_path="sentence-transformers/all-MiniLM-L12-v2",
-                               llm_base_url="http://vllm-service:8000/v1",
+                               llm_base_url="http://127.0.0.1:8000/v1",
                                top_k=3)
     print("Response generated:")
-    print(f"\n{result1}")
+    print_stream_data(result1)
     print("\n")
     print("Question: What are the two deployment options in OpenShift AI?")
     result2 = execute_rag_query("What are the two deployment options in OpenShift AI?",
                                milvus_file_path="./milvus.db",
                                embedding_model_path="sentence-transformers/all-MiniLM-L12-v2",
-                               llm_base_url="http://vllm-service:8000/v1",
+                               llm_base_url="http://127.0.0.1:8000/v1",
                                top_k=3)
     print("Response generated:")
-    print(f"\n{result2}")
+    print_stream_data(result2)
     print("\n")
     print("Question: What is OpenShift AI?")
     result3 = execute_rag_query("What is OpenShift AI?",
                                milvus_file_path="./milvus.db",
                                embedding_model_path="sentence-transformers/all-MiniLM-L12-v2",
-                               llm_base_url="http://vllm-service:8000/v1",
+                               llm_base_url="http://127.0.0.1:8000/v1",
                                top_k=3)
     print("Response generated:")
-    print(f"\n{result3}")
+    print_stream_data(result3)
 
 
 if __name__ == '__main__':
