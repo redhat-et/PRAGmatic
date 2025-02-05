@@ -56,7 +56,7 @@ DEFAULT_SETTINGS = {
     "llm_http_client": None,
     "generator_object": None,  # an instance of a Haystack-compatible generator object
 
-    "enable_response_streaming": True,
+    "enable_response_streaming": False,
     'streaming_timeout': 30, # Default timeout is 60 seconds if not specified
 
     # advanced RAG options
