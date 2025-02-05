@@ -39,7 +39,7 @@ DEFAULT_SETTINGS = {
 
     # LLM-related settings
     "llm": "mistralai/Mistral-7B-Instruct-v0.2",
-    "llm_base_url": "http://127.0.0.1:8000/v1",
+    "llm_base_url": "http://vllm-service:8000/v1",
     "llm_api_key": Secret.from_token("VLLM-PLACEHOLDER-API-KEY"),  # use Secret.from_env_var("API_KEY_ENV_VAR_NAME") to enable authentication
     "llm_connection_timeout": 30,
     "llm_connection_max_retries": 3,
