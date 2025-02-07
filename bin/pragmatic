@@ -1,3 +1,4 @@
+# !/bin/python3
 # addressing the issue where the project structure causes pragmatic to not be on the path
 import sys
 import os
@@ -5,8 +6,8 @@ sys.path.insert(0, os.path.abspath(os.getcwd()))
 
 import argparse
 
-from api import index_path_for_rag, execute_rag_query, evaluate_rag_pipeline
-from settings import DEFAULT_SETTINGS
+from pragmatic.api import index_path_for_rag, execute_rag_query, evaluate_rag_pipeline
+from pragmatic.settings import DEFAULT_SETTINGS
 
 
 def main():
