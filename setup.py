@@ -7,6 +7,6 @@ setup(
     description='An experimental RAG framework',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
-    url='https://github.com/redhat-et/PRAGmatic'
+    url='https://github.com/redhat-et/PRAGmatic',
     scripts=["bin/pragmatic"],
 )
