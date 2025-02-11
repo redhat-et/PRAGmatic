@@ -1,4 +1,4 @@
-# !/bin/python3
+#!/usr/bin/python3
 # addressing the issue where the project structure causes pragmatic to not be on the path
 import sys
 import os
