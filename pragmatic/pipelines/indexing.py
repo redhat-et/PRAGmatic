@@ -9,8 +9,8 @@ from haystack.components.writers import DocumentWriter
 
 from docling_haystack.converter import DoclingConverter, ExportType
 
-from pragmatic.haystack.docling_splitter import DoclingDocumentSplitter
-from pragmatic.optimizations.finetuning import finetune_embedding_model
+from pragmatic.docling_splitter import DoclingDocumentSplitter
+from pragmatic.finetuning import finetune_embedding_model
 from pragmatic.pipelines.pipeline import CommonPipelineWrapper
 
 
